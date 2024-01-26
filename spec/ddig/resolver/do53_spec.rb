@@ -68,10 +68,10 @@ RSpec.describe Ddig::Resolver::Do53 do
       @do53 = Ddig::Resolver::Do53.new(hostname: 'dns.google', nameservers: @nameservers)
     end
 
-    it "raise Socket::ResolutionError" do
+    it "raise Error" do
       expect {
         @do53.lookup
-      }.to raise_error(Socket::ResolutionError)
+      }.to raise_error(StandardError) # ruby 3.3+: Socket::ResolutionError, ruby 3.2-: SocketError
     end
   end
 

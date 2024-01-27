@@ -109,6 +109,8 @@ RSpec.describe Ddig::Resolver::Do53 do
 
   context "#lookup: ipv6" do
     before(:each) do
+      skip unless enable_ipv6?
+
       @ip = :ipv6
       @nameservers = ['8.8.8.8', '2001:4860:4860::8888']
 

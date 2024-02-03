@@ -1,12 +1,13 @@
 module Ddig
   class Ddr
-    class Nameserver
-      attr_reader :target, :protocol, :port, :dohpath, :address, :ip
+    class DesignatedResolver
+      attr_reader :unencrypted_resolver, :target, :protocol, :port, :dohpath, :address, :ip
 
       PROTOCOLS = ['http/1.1', 'h2', 'h3', 'dot', 'doq']
 
-      def initialize(target:, protocol: nil, port: nil, dohpath: nil, address: nil, ip: nil)
+      def initialize(unencrypted_resolver:, target:, protocol: nil, port: nil, dohpath: nil, address: nil, ip: nil)
         @target = target
+        @unencrypted_resolver = unencrypted_resolver
         @protocol = protocol
         @port = port
         @dohpath = dohpath
@@ -37,7 +38,7 @@ module Ddig
       end
 
       def uniq_key
-        "#{@target}-#{@protocol}-#{@port}-#{@dohpath}-#{@address}-#{@ip}"
+        "#{@unencrypted_resolver}-#{@target}-#{@protocol}-#{@port}-#{@dohpath}-#{@address}-#{@ip}"
       end
     end
   end

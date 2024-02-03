@@ -2,6 +2,8 @@
 
 require_relative "ddig/version"
 require_relative "ddig/resolver/do53"
+require_relative "ddig/ddr"
+require_relative "ddig/ddr/nameserver"
 
 module Ddig
   class Error < StandardError; end

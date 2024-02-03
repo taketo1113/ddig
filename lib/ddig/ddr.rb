@@ -52,17 +52,30 @@ module Ddig
         end
 
         protocols.each do |protocol|
+          do53_v4 = ::Ddig::Resolver::Do53.new(hostname: target, nameservers: @nameservers, ip: :ipv4).lookup
+          do53_v6 = ::Ddig::Resolver::Do53.new(hostname: target, nameservers: @nameservers, ip: :ipv6).lookup
+
           # ipv4
-          do53_v4 = ::Ddig::Resolver::Do53.new(hostname: target, nameservers: @nameserver, ip: :ipv4).lookup
           unless do53_v4.nil? || do53_v4.a.nil?
             do53_v4.a.each do |address|
               ddr_nameserver = ::Ddig::Ddr::Nameserver.new(target: target, protocol: protocol, port: port, dohpath: dohpath, address: address.to_s, ip: :ipv4)
               @ddr_nameservers << ddr_nameserver
             end
           end
+          unless do53_v6.nil? || do53_v6.a.nil?
+            do53_v6.a.each do |address|
+              ddr_nameserver = ::Ddig::Ddr::Nameserver.new(target: target, protocol: protocol, port: port, dohpath: dohpath, address: address.to_s, ip: :ipv4)
+              @ddr_nameservers << ddr_nameserver
+            end
+          end
 
           # ipv6
-          do53_v6 = ::Ddig::Resolver::Do53.new(hostname: target, nameservers: @nameserver, ip: :ipv6).lookup
+          unless do53_v4.nil? || do53_v4.aaaa.nil?
+            do53_v4.aaaa.each do |address|
+              ddr_nameserver = ::Ddig::Ddr::Nameserver.new(target: target, protocol: protocol, port: port, dohpath: dohpath, address: address.to_s, ip: :ipv6)
+              @ddr_nameservers << ddr_nameserver
+            end
+          end
           unless do53_v6.nil? || do53_v6.aaaa.nil?
             do53_v6.aaaa.each do |address|
               ddr_nameserver = ::Ddig::Ddr::Nameserver.new(target: target, protocol: protocol, port: port, dohpath: dohpath, address: address.to_s, ip: :ipv6)

@@ -90,7 +90,7 @@ module Ddig
         end
       end
 
-      @ddr_nameservers
+      @ddr_nameservers.uniq! { |nameserver| nameserver.uniq_key }
     end
 
     def set_nameservers(nameservers)

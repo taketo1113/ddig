@@ -35,6 +35,10 @@ module Ddig
           @port = 853
         end
       end
+
+      def uniq_key
+        "#{@target}-#{@protocol}-#{@port}-#{@dohpath}-#{@address}-#{@ip}"
+      end
     end
   end
 end

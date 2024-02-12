@@ -1,5 +1,7 @@
 require 'resolv'
+
 require_relative "ddr/verify_cert"
+require_relative "ddr/designated_resolver"
 
 module Ddig
   # DDR client (Discovery of Designated Resolvers)
@@ -11,14 +13,19 @@ module Ddig
       @ip = ip
 
       set_nameservers(nameservers)
+
+      # discover designated resolvers
+      query_svcb_records
+      discover_designated_resolvers
+      verify_discovery
     end
 
-    def svcb_records
-      if @nameservers.nil? || @nameservers.empty?
-        return nil
-      end
-
+    def query_svcb_records
       @svcb_records = []
+
+      if @nameservers.nil? || @nameservers.empty?
+        return @svcb_records
+      end
 
       @nameservers.each do |nameserver|
         svcb_rrset = Resolv::DNS.open(nameserver: nameserver) do |dns|
@@ -33,12 +40,12 @@ module Ddig
       @svcb_records
     end
 
-    # Designated Resolvers from SVCB RR Set
+    # Discovery Designated Resolvers from SVCB RR Set
     # ref. https://www.rfc-editor.org/rfc/rfc9461.html
-    def designated_resolvers
+    def discover_designated_resolvers
       @designated_resolvers = []
 
-      svcb_records.each do |item|
+      @svcb_records.each do |item|
         unencrypted_resolver = item[:unencrypted_resolver]
         svcb_record = item[:svcb_record]
 
@@ -121,7 +128,13 @@ module Ddig
       if nameservers.nil?
         @nameservers = Resolv::DNS::Config.default_config_hash[:nameserver]
       else
-        @nameservers = nameservers
+        if nameservers.is_a?(Array)
+          @nameservers = nameservers
+        else
+          @nameservers = [nameservers]
+        end
+
+        @nameservers.map! { |nameserver| IPAddr.new(nameserver).to_s rescue nil }.compact!
       end
 
       if @ip == :ipv4

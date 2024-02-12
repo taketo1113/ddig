@@ -1,4 +1,5 @@
 require 'resolv'
+require_relative "ddr/verify_cert"
 
 module Ddig
   # DDR client (Discovery of Designated Resolvers)

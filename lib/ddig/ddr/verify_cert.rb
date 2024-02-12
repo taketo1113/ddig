@@ -23,8 +23,7 @@ module Ddig
           }
 
           ctx = OpenSSL::SSL::SSLContext.new
-          ctx.verify_hostname = true
-          #ctx.verify_mode = OpenSSL::SSL::VERIFY_PEER
+          ctx.set_params
 
           ssl_socket = OpenSSL::SSL::SSLSocket.new(socket, ctx)
           ssl_socket.sync_close = true

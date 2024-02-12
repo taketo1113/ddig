@@ -110,6 +110,13 @@ module Ddig
       @designated_resolvers.uniq! { |designated_resolver| designated_resolver.uniq_key }
     end
 
+    def verify_discovery
+      @designated_resolvers.map! do |designated_resolver|
+        designated_resolver.verify
+        designated_resolver
+      end
+    end
+
     def set_nameservers(nameservers)
       if nameservers.nil?
         @nameservers = Resolv::DNS::Config.default_config_hash[:nameserver]

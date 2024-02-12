@@ -2,6 +2,7 @@ module Ddig
   class Ddr
     class DesignatedResolver
       attr_reader :unencrypted_resolver, :target, :protocol, :port, :dohpath, :address, :ip
+      attr_reader :verify_cert
 
       PROTOCOLS = ['http/1.1', 'h2', 'h3', 'dot', 'doq']
 
@@ -16,12 +17,17 @@ module Ddig
 
         # check protocol
         unless PROTOCOLS.include?(@protocol)
-          p "Not Supportted Protocol (#{@protocol})"
+          raise Error.new("Not Supportted Protocol (protocol: #{@protocol}). Suported protocol is #{PROTOCOLS.join(' / ')}")
         end
 
         if @port.nil?
           set_default_port
         end
+      end
+
+      def verify
+        @verify_cert = VerifyCert.new(hostname: @target, address: @address, port: @port, unencrypted_resolver: @unencrypted_resolver)
+        @verify_cert.verify
       end
 
       # Set default port by protocol

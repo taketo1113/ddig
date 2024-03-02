@@ -2,6 +2,7 @@
 
 require_relative "ddig/version"
 require_relative "ddig/resolver/do53"
+require_relative "ddig/resolver/dot"
 require_relative "ddig/ddr"
 
 module Ddig

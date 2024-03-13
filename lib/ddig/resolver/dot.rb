@@ -1,4 +1,4 @@
-require "openssl"
+require 'openssl'
 require 'resolv'
 
 module Ddig
@@ -8,7 +8,7 @@ module Ddig
       attr_reader :hostname, :server, :server_name, :port
       attr_reader :a, :aaaa
 
-      def initialize(hostname:, server: , server_name: nil, port: 853)
+      def initialize(hostname:, server:, server_name: nil, port: 853)
         @hostname = hostname
         @server = server
         @server_name = server_name
@@ -22,9 +22,9 @@ module Ddig
           return nil
         end
 
-        @a = get_resources(@hostname, Resolv::DNS::Resource::IN::A).map { |resource| resource.address.to_s }
+        @a = get_resources(@hostname, Resolv::DNS::Resource::IN::A).map { |resource| resource.address.to_s if resource.is_a?(Resolv::DNS::Resource::IN::A) }.compact
 
-        @aaaa = get_resources(@hostname, Resolv::DNS::Resource::IN::AAAA).map { |resource| resource.address.to_s }
+        @aaaa = get_resources(@hostname, Resolv::DNS::Resource::IN::AAAA).map { |resource| resource.address.to_s if resource.is_a?(Resolv::DNS::Resource::IN::AAAA) }.compact
 
         self
       end

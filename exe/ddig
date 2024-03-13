@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require "ddig/cli"
+
+cli = Ddig::Cli.new(ARGV)
+cli.exec

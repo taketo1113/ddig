@@ -27,7 +27,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
 ## Usage
 
 ```ruby
-ddig = Ddig.lookup('dns.google')
+ddig = Ddig.lookup('dns.google', nameservers: ['8.8.8.8', '2001:4860:4860::8888'])
 
 ddig[:do53][:ipv4]
 => #<Ddig::Resolver::Do53:0x00000001207aaeb0 @a=["8.8.4.4", "8.8.8.8"], @aaaa=["2001:4860:4860::8844", "2001:4860:4860::8888"], @hostname="dns.google", @ip=:ipv4, @nameservers=["8.8.8.8"]>

@@ -8,13 +8,14 @@ require_relative "ddig/ddr"
 module Ddig
   class Error < StandardError; end
 
-  def self.lookup(hostname)
+  def self.lookup(hostname, nameservers: nil)
     @hostname = hostname
+    @nameservers = nameservers
 
-    @do53_ipv4 = Ddig::Resolver::Do53.new(hostname: @hostname, ip: :ipv4).lookup
-    @do53_ipv6 = Ddig::Resolver::Do53.new(hostname: @hostname, ip: :ipv6).lookup
+    @do53_ipv4 = Ddig::Resolver::Do53.new(hostname: @hostname, nameservers: @nameservers, ip: :ipv4).lookup
+    @do53_ipv6 = Ddig::Resolver::Do53.new(hostname: @hostname, nameservers: @nameservers, ip: :ipv6).lookup
 
-    @ddr = Ddig::Ddr.new
+    @ddr = Ddig::Ddr.new(nameservers: @nameservers)
 
     {
       do53: {

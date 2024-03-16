@@ -22,6 +22,7 @@ module Ddig
       @option_parser = OptionParser.new do |opts|
         opts.banner = "Usage: ddig [options] hostname"
 
+        opts.on("--nameserver=ipaddress", "nameserver ip address") { |v| @options[:nameserver] = v }
         opts.on("--format={text|json}", "output format (default: text)") { |v| @options[:format] = v }
 
         opts.separator ""
@@ -37,7 +38,7 @@ module Ddig
     end
 
     def exec
-      @ddig = Ddig.lookup(@hostname)
+      @ddig = Ddig.lookup(@hostname, nameservers: [@options[:nameserver]])
 
       if @options[:format] == 'json'
         # TODO: to_json

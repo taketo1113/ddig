@@ -83,9 +83,52 @@ ddig[:ddr]
 ]
 ```
 
+- Do53
+```ruby
+do53 = Ddig::Resolver::Do53.new(hostname: 'dns.google', nameservers: '8.8.8.8').lookup
+=> #<Ddig::Resolver::Do53:0x0000000121717b78 @a=["8.8.8.8", "8.8.4.4"], @aaaa=["2001:4860:4860::8844", "2001:4860:4860::8888"], @hostname="dns.google", @ip=nil, @nameserver=#<Ddig::Nameserver:0x00000001211fb108 @nameservers="8.8.8.8", @servers=["8.8.8.8"]>, @nameservers=["8.8.8.8"]>
+
+do53.a
+=> ["8.8.4.4", "8.8.8.8"]
+do53.aaaa
+=> ["2001:4860:4860::8844", "2001:4860:4860::8888"]
+```
+
+- DoT
+```ruby
+dot = Ddig::Resolver::Dot.new(hostname: 'dns.google', server: '8.8.8.8').lookup
+=> #<Ddig::Resolver::Dot:0x000000012145da90 @a=["8.8.8.8", "8.8.4.4"], @aaaa=["2001:4860:4860::8844", "2001:4860:4860::8888"], @hostname="dns.google", @open_timeout=3, @port=853, @server="8.8.8.8", @server_name=nil>
+
+dot.a
+=> ["8.8.4.4", "8.8.8.8"]
+dot.aaaa
+=> ["2001:4860:4860::8844", "2001:4860:4860::8888"]
+```
+
 ### CLI
 
-(TBD)
+- UDP(Do53)
+```sh
+$ ddig --udp --nameserver 8.8.8.8 dns.google
+dns.google	A	8.8.8.8
+dns.google	A	8.8.4.4
+dns.google	AAAA	2001:4860:4860::8844
+dns.google	AAAA	2001:4860:4860::8888
+
+# SERVER: 8.8.8.8
+```
+
+- DoT
+```sh
+$ ddig --dot --nameserver 8.8.8.8 dns.google
+dns.google	A	8.8.4.4
+dns.google	A	8.8.8.8
+dns.google	AAAA	2001:4860:4860::8844
+dns.google	AAAA	2001:4860:4860::8888
+
+# SERVER(Address): 8.8.8.8
+# PORT: 853
+```
 
 ## Development
 

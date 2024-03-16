@@ -12,7 +12,7 @@ module Ddig
         @hostname = hostname
         @server = server
         @server_name = server_name
-        @port = port
+        @port = port || 853
 
         @open_timeout = 3
       end

@@ -65,4 +65,24 @@ RSpec.describe Ddig::Resolver::Dot do
       }.to raise_error(OpenSSL::SSL::SSLError) # error: certificate verify failed (hostname mismatch)
     end
   end
+
+  context "set port attribute" do
+    it "return default port without port" do
+      @dot = Ddig::Resolver::Dot.new(hostname: 'dns.google', server: 'dns.google')
+
+      expect(@dot.port).to eq 853
+    end
+
+    it "return default port wit nil value of port" do
+      @dot = Ddig::Resolver::Dot.new(hostname: 'dns.google', server: 'dns.google', port: nil)
+
+      expect(@dot.port).to eq 853
+    end
+
+    it "return port with port value" do
+      @dot = Ddig::Resolver::Dot.new(hostname: 'dns.google', server: 'dns.google', port: 8853)
+
+      expect(@dot.port).to eq 8853
+    end
+  end
 end

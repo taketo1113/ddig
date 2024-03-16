@@ -107,7 +107,28 @@ dot.aaaa
 
 ### CLI
 
-(TBD)
+- UDP(Do53)
+```sh
+$ ddig --udp --nameserver 8.8.8.8 dns.google
+dns.google	A	8.8.8.8
+dns.google	A	8.8.4.4
+dns.google	AAAA	2001:4860:4860::8844
+dns.google	AAAA	2001:4860:4860::8888
+
+# SERVER: 8.8.8.8
+```
+
+- DoT
+```sh
+$ ddig --dot --nameserver 8.8.8.8 dns.google
+dns.google	A	8.8.4.4
+dns.google	A	8.8.8.8
+dns.google	AAAA	2001:4860:4860::8844
+dns.google	AAAA	2001:4860:4860::8888
+
+# SERVER(Address): 8.8.8.8
+# PORT: 853
+```
 
 ## Development
 

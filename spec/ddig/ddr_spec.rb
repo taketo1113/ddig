@@ -20,16 +20,16 @@ RSpec.describe Ddig::Ddr do
       expect(svcb_record[:svcb_record].target.to_s).to eq 'dns.google'
     end
 
-    it "return [] with empty namesevers" do
-      @ddr = Ddig::Ddr.new(nameservers: [])
-
-      expect(@ddr.svcb_records).to eq []
+    it "raise error with empty namesevers" do
+      expect {
+        @ddr = Ddig::Ddr.new(nameservers: [])
+      }.to raise_error(Ddig::Error)
     end
 
-    it "return [] with invalid namesevers" do
-      @ddr = Ddig::Ddr.new(nameservers: 'invalid')
-
-      expect(@ddr.svcb_records).to eq []
+    it "raise error with invalid namesevers" do
+      expect {
+        @ddr = Ddig::Ddr.new(nameservers: 'invalid')
+      }.to raise_error(Ddig::Error)
     end
   end
 
@@ -50,16 +50,16 @@ RSpec.describe Ddig::Ddr do
       expect(designated_resolver.verify_cert).not_to eq nil
     end
 
-    it "return [] with empty namesevers" do
-      @ddr = Ddig::Ddr.new(nameservers: [])
-
-      expect(@ddr.designated_resolvers).to eq []
+    it "raise error with empty namesevers" do
+      expect {
+        @ddr = Ddig::Ddr.new(nameservers: [])
+      }.to raise_error(Ddig::Error)
     end
 
-    it "return [] with invalid namesevers" do
-      @ddr = Ddig::Ddr.new(nameservers: 'invalid')
-
-      expect(@ddr.designated_resolvers).to eq []
+    it "raise error with invalid namesevers" do
+      expect {
+        @ddr = Ddig::Ddr.new(nameservers: 'invalid')
+      }.to raise_error(Ddig::Error)
     end
   end
 end

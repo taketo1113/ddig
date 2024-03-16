@@ -12,7 +12,8 @@ module Ddig
     def initialize(nameservers: nil, ip: nil)
       @ip = ip
 
-      set_nameservers(nameservers)
+      @nameserver = Ddig::Nameserver.new(nameservers: nameservers)
+      set_nameservers
 
       # discover designated resolvers
       query_svcb_records
@@ -23,7 +24,7 @@ module Ddig
     def query_svcb_records
       @svcb_records = []
 
-      if @nameservers.nil? || @nameservers.empty?
+      if @nameservers.empty?
         return @svcb_records
       end
 
@@ -124,42 +125,16 @@ module Ddig
       end
     end
 
-    def set_nameservers(nameservers)
-      if nameservers.nil?
-        @nameservers = Resolv::DNS::Config.default_config_hash[:nameserver]
-      else
-        if nameservers.is_a?(Array)
-          @nameservers = nameservers
-        else
-          @nameservers = [nameservers]
-        end
-
-        @nameservers.map! { |nameserver| IPAddr.new(nameserver).to_s rescue nil }.compact!
-      end
+    def set_nameservers
+      @nameservers = @nameserver.servers
 
       if @ip == :ipv4
-        @nameservers = nameservers_ipv4
+        @nameservers = @nameserver.servers_ipv4
       end
 
       if @ip == :ipv6
-        @nameservers = nameservers_ipv6
+        @nameservers = @nameserver.servers_ipv6
       end
-    end
-
-    def nameservers_ipv4
-      @nameservers.map do |nameserver|
-        if IPAddr.new(nameserver).ipv4?
-          nameserver
-        end
-      end.compact
-    end
-
-    def nameservers_ipv6
-      @nameservers.map do |nameserver|
-        if IPAddr.new(nameserver).ipv6?
-          nameserver
-        end
-      end.compact
     end
   end
 end

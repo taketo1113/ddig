@@ -30,6 +30,22 @@ module Ddig
       Resolv::DNS::Config.default_config_hash[:nameserver]
     end
 
+    def servers_ipv4
+      @servers.map do |nameserver|
+        if IPAddr.new(nameserver).ipv4?
+          nameserver
+        end
+      end.compact
+    end
+
+    def servers_ipv6
+      @servers.map do |nameserver|
+        if IPAddr.new(nameserver).ipv6?
+          nameserver
+        end
+      end.compact
+    end
+
     def validation_servers
       @servers.uniq.each do |server|
         addr = IPAddr.new(server) rescue nil

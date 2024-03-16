@@ -50,4 +50,32 @@ RSpec.describe Ddig::Nameserver do
       end
     end
   end
+
+  context "#servers_ipv4" do
+    it "return only ipv4 nameservers with namesevers" do
+      @nameserver = Ddig::Nameserver.new(nameservers: ['8.8.8.8', '2001:4860:4860::8888'])
+
+      expect(@nameserver.servers_ipv4).to eq ['8.8.8.8']
+    end
+
+    it "return empty array without ipv4 namesevers" do
+      @nameserver = Ddig::Nameserver.new(nameservers: ['2001:4860:4860::8888'])
+
+      expect(@nameserver.servers_ipv4).to eq []
+    end
+  end
+
+  context "#servers_ipv6" do
+    it "return only ipv6 nameservers with namesevers" do
+      @nameserver = Ddig::Nameserver.new(nameservers: ['8.8.8.8', '2001:4860:4860::8888'])
+
+      expect(@nameserver.servers_ipv6).to eq ['2001:4860:4860::8888']
+    end
+
+    it "return empty array without ipv6 namesevers" do
+      @nameserver = Ddig::Nameserver.new(nameservers: ['8.8.8.8'])
+
+      expect(@nameserver.servers_ipv6).to eq []
+    end
+  end
 end

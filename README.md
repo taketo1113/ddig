@@ -7,10 +7,13 @@ ddig is DNS lookup utility for Ruby.
 - DNS Resolvers
   - UDP (Do53)
   - DoT (DNS over TLS)
-    - https://datatracker.ietf.org/doc/html/rfc7858
+    - https://www.rfc-editor.org/rfc/rfc7858.html
   - ~~DoH (DNS over HTTPS)~~
     - Not yet Supported
-    - https://datatracker.ietf.org/doc/html/rfc8484
+    - https://www.rfc-editor.org/rfc/rfc8484.html
+  - ~~DoQ (DNS over QUIC)~~
+    - Not Supported
+    - https://www.rfc-editor.org/rfc/rfc9250.html
 - DDR (Discovery of Designated Resolvers)
   - https://www.rfc-editor.org/rfc/rfc9462.html
 

@@ -26,7 +26,7 @@ module Ddig
         opts.on("-t", "--type={all|do53|dot}", "resolve type (default: all)") { |v| @options[:type] = v }
         opts.on("--udp", "use resolve type of udp(do53)") { |v| @options[:type] = 'do53' }
         opts.on("--dot", "use resolve type of dot") { |v| @options[:type] = 'dot' }
-        opts.on("--nameserver=ipaddress", "nameserver") { |v| @options[:nameserver] = v }
+        opts.on("-@", "--nameserver=ipaddress", "nameserver") { |v| @options[:nameserver] = v }
         opts.on("-p", "--port=port", "port") { |v| @options[:port] = v }
         opts.on("--format={text|json}", "output format (default: text)") { |v| @options[:format] = v }
 

@@ -8,8 +8,8 @@ ddig is DNS lookup utility for Ruby.
   - UDP (Do53)
   - DoT (DNS over TLS)
     - https://www.rfc-editor.org/rfc/rfc7858.html
-  - ~~DoH (DNS over HTTPS)~~
-    - Not yet Supported
+  - DoH (DNS over HTTPS)
+    - Support only HTTP/1.1
     - https://www.rfc-editor.org/rfc/rfc8484.html
   - ~~DoQ (DNS over QUIC)~~
     - Not Supported

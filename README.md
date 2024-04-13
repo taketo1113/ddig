@@ -146,7 +146,7 @@ dns.google	AAAA	2001:4860:4860::8844
 
 - DoH (HTTP/1.1)
 ```sh
-$ ddig --doh-http1.1 --nameserver dns.google --doh-path /dns-query{?dns} dns.google
+$ ddig --doh-h1 --nameserver dns.google --doh-path /dns-query{?dns} dns.google
 dns.google	A	8.8.8.8
 dns.google	A	8.8.4.4
 dns.google	AAAA	2001:4860:4860::8888

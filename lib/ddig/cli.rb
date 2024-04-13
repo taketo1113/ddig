@@ -26,7 +26,7 @@ module Ddig
         opts.on("-t", "--type={all|do53|dot}", "resolve type (default: all)") { |v| @options[:type] = v }
         opts.on("--udp", "use resolve type of udp(do53)") { |v| @options[:type] = 'do53' }
         opts.on("--dot", "use resolve type of dot") { |v| @options[:type] = 'dot' }
-        opts.on("--doh-http1.1", "use resolve type of doh (http/1.1)") { |v| @options[:type] = 'doh_h1' }
+        opts.on("--doh-h1", "use resolve type of doh (http/1.1)") { |v| @options[:type] = 'doh_h1' }
         opts.on("--doh-path=doh-path", "doh service path") { |v| @options[:doh_path] = v }
         opts.on("-@", "--nameserver=ipaddress|doh-hostname", "nameserver") { |v| @options[:nameserver] = v }
         opts.on("-p", "--port=port", "port") { |v| @options[:port] = v }

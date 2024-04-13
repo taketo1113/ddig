@@ -2,6 +2,8 @@ require 'net/http'
 require 'resolv'
 require 'base64'
 
+require_relative 'dns_message'
+
 module Ddig
   module Resolver
     # DNS over HTTPS (HTTP/1.1)
@@ -33,10 +35,9 @@ module Ddig
 
       def get_resources(hostname, typeclass)
         # send query
-        message = dns_message(hostname, typeclass)
-        request = [message.encode.length].pack('n') + message.encode
+        payload = DnsMessage.encode(hostname, typeclass)
 
-        path_with_query = @dohpath.gsub('{?dns}', '?dns=' + Base64.urlsafe_encode64(message.encode, padding: false))
+        path_with_query = @dohpath.gsub('{?dns}', '?dns=' + Base64.urlsafe_encode64(payload, padding: false))
 
         http_response = Net::HTTP.start(@server, @port, use_ssl: true, ipaddr: @address) do |http|
           header = {}
@@ -47,26 +48,9 @@ module Ddig
         end
 
         # recive answer
-        response = Resolv::DNS::Message.decode(http_response.body)
-
-        resources = response.answer.map { |name, ttl, resource| resource }
+        resources = DnsMessage.getresources(http_response.body)
 
         resources
-      end
-
-      def dns_message(hostname, typeclass)
-        if hostname.nil?
-          return nil
-        end
-        if typeclass.nil?
-          return nil
-        end
-
-        message = Resolv::DNS::Message.new
-        message.rd = 1 # recursive query
-        message.add_question(hostname, typeclass)
-
-        message
       end
     end
   end

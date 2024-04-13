@@ -1,6 +1,8 @@
 require 'openssl'
 require 'resolv'
 
+require_relative 'dns_message'
+
 module Ddig
   module Resolver
     # DNS over TLS/TCP
@@ -33,16 +35,14 @@ module Ddig
         ssl_socket = get_socket
 
         # send query
-        message = dns_message(hostname, typeclass)
+        payload = DnsMessage.encode(hostname, typeclass)
+        request = [payload.length].pack('n') + payload
 
-        request = [message.encode.length].pack('n') + message.encode
         ssl_socket.write(request)
 
         # recive answer
         len = ssl_socket.read(2).unpack1('n')
-        response = Resolv::DNS::Message.decode(ssl_socket.read(len))
-
-        resources = response.answer.map { |name, ttl, resource| resource }
+        resources = DnsMessage.getresources(ssl_socket.read(len))
 
         resources
       end
@@ -73,21 +73,6 @@ module Ddig
 
           ssl_socket
         end
-      end
-
-      def dns_message(hostname, typeclass)
-        if hostname.nil?
-          return nil
-        end
-        if typeclass.nil?
-          return nil
-        end
-
-        message = Resolv::DNS::Message.new
-        message.rd = 1 # recursive query
-        message.add_question(hostname, typeclass)
-
-        message
       end
     end
   end

@@ -38,10 +38,7 @@ module Ddig
 
         path_with_query = @dohpath.gsub('{?dns}', '?dns=' + Base64.urlsafe_encode64(message.encode, padding: false))
 
-        http_response = Net::HTTP.start(@server, @port, use_ssl: true) do |http|
-          unless @address.nil?
-            http.ipaddr = @address
-          end
+        http_response = Net::HTTP.start(@server, @port, use_ssl: true, ipaddr: @address) do |http|
           header = {}
           header['Accept'] = 'application/dns-message'
           #http.open_timeout = @open_timeout

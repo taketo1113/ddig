@@ -47,10 +47,14 @@ module Ddig
           http.get(path_with_query, header)
         end
 
-        # recive answer
-        resources = DnsMessage.getresources(http_response.body)
-
-        resources
+        case http_response
+        when Net::HTTPSuccess
+          # recive answer
+          return DnsMessage.getresources(http_response.body)
+        else
+          http_response.value
+          return []
+        end
       end
     end
   end

@@ -62,7 +62,9 @@ RSpec.describe Ddig::Resolver::DohH1 do
     it "raise Error" do
       expect {
         @doh.lookup
-      }.to raise_error(OpenSSL::SSL::SSLError) # error: certificate verify failed (hostname mismatch)
+      }.to raise_error(StandardError)
+      # ruby2.7+: OpenSSL::SSL::SSLError: certificate verify failed (hostname mismatch)
+      # ruby2.6: Net::HTTPServerException: 404 "Not Found"
     end
   end
 

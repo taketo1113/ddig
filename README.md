@@ -108,6 +108,17 @@ dot.aaaa
 => ["2001:4860:4860::8844", "2001:4860:4860::8888"]
 ```
 
+- DoH (HTTP/1.1)
+```ruby
+doh = Ddig::Resolver::DohH1.new(hostname: 'dns.google', server: 'dns.google', dohpath: '/dns-query{?dns}').lookup
+=> #<Ddig::Resolver::DohH1:0x00000001023ed020 @a=["8.8.4.4", "8.8.8.8"], @aaaa=["2001:4860:4860::8888", "2001:4860:4860::8844"], @address=nil, @dohpath="/dns-query{?dns}", @hostname="dns.google", @open_timeout=10, @port=443, @server="dns.google">
+
+doh.a
+=> ["8.8.4.4", "8.8.8.8"]
+doh.aaaa
+=> ["2001:4860:4860::8844", "2001:4860:4860::8888"]
+```
+
 ### CLI
 
 - UDP(Do53)
@@ -124,13 +135,26 @@ dns.google	AAAA	2001:4860:4860::8888
 - DoT
 ```sh
 $ ddig --dot --nameserver 8.8.8.8 dns.google
-dns.google	A	8.8.4.4
 dns.google	A	8.8.8.8
-dns.google	AAAA	2001:4860:4860::8844
+dns.google	A	8.8.4.4
 dns.google	AAAA	2001:4860:4860::8888
+dns.google	AAAA	2001:4860:4860::8844
 
 # SERVER(Address): 8.8.8.8
 # PORT: 853
+```
+
+- DoH (HTTP/1.1)
+```sh
+$ ddig --doh-http1.1 --nameserver dns.google --doh-path /dns-query{?dns} dns.google
+dns.google	A	8.8.8.8
+dns.google	A	8.8.4.4
+dns.google	AAAA	2001:4860:4860::8888
+dns.google	AAAA	2001:4860:4860::8844
+
+# SERVER(Hostname): dns.google
+# SERVER(Path): /dns-query{?dns}
+# PORT: 443
 ```
 
 ## Development

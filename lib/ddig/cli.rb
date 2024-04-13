@@ -26,7 +26,9 @@ module Ddig
         opts.on("-t", "--type={all|do53|dot}", "resolve type (default: all)") { |v| @options[:type] = v }
         opts.on("--udp", "use resolve type of udp(do53)") { |v| @options[:type] = 'do53' }
         opts.on("--dot", "use resolve type of dot") { |v| @options[:type] = 'dot' }
-        opts.on("-@", "--nameserver=ipaddress", "nameserver") { |v| @options[:nameserver] = v }
+        opts.on("--doh-http1.1", "use resolve type of doh (http/1.1)") { |v| @options[:type] = 'doh_h1' }
+        opts.on("--doh-path=doh-path", "doh service path") { |v| @options[:doh_path] = v }
+        opts.on("-@", "--nameserver=ipaddress|doh-hostname", "nameserver") { |v| @options[:nameserver] = v }
         opts.on("-p", "--port=port", "port") { |v| @options[:port] = v }
         opts.on("--format={text|json}", "output format (default: text)") { |v| @options[:format] = v }
 
@@ -50,6 +52,8 @@ module Ddig
         resolve_do53
       when "dot"
         resolve_dot
+      when "doh_h1"
+        resolve_doh_h1
       end
     end
 
@@ -96,6 +100,29 @@ module Ddig
       puts "# SERVER(Address): #{dot.server}"
       #puts "# SERVER(Hostname): #{dot.server_name}"
       puts "# PORT: #{dot.port}"
+    end
+
+    def resolve_doh_h1
+      if @options[:nameserver].nil? || @options[:doh_path].nil?
+        puts 'ddig: doh needs option of --doh-path=doh-path'
+        exit
+      end
+
+      doh = Ddig::Resolver::DohH1.new(hostname: @hostname, server: @options[:nameserver], dohpath: @options[:doh_path], port: @options[:port]).lookup
+
+      doh.a.each do |address|
+        rr_type = 'A'
+        puts "#{@hostname}\t#{rr_type}\t#{address}"
+      end
+      doh.aaaa.each do |address|
+        rr_type = 'AAAA'
+        puts "#{@hostname}\t#{rr_type}\t#{address}"
+      end
+
+      puts
+      puts "# SERVER(Hostname): #{doh.server}"
+      puts "# SERVER(Path): #{doh.dohpath}"
+      puts "# PORT: #{doh.port}"
     end
   end
 end

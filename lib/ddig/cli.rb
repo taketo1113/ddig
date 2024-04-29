@@ -7,7 +7,7 @@ module Ddig
     def initialize(args)
       @args = args
       @options = {
-        type: 'all',
+        dns_type: 'all',
         format: 'text',
       }
 
@@ -23,10 +23,10 @@ module Ddig
       @option_parser = OptionParser.new do |opts|
         opts.banner = "Usage: ddig [options] hostname"
 
-        opts.on("-t", "--type={all|do53|dot}", "resolve type (default: all)") { |v| @options[:type] = v }
-        opts.on("--udp", "use resolve type of udp(do53)") { |v| @options[:type] = 'do53' }
-        opts.on("--dot", "use resolve type of dot") { |v| @options[:type] = 'dot' }
-        opts.on("--doh-h1", "use resolve type of doh (http/1.1)") { |v| @options[:type] = 'doh_h1' }
+        opts.on("-d", "--dns-type={all|do53|dot}", "resolve type (default: all)") { |v| @options[:dns_type] = v }
+        opts.on("--udp", "use resolve type of udp(do53)") { |v| @options[:dns_type] = 'do53' }
+        opts.on("--dot", "use resolve type of dot") { |v| @options[:dns_type] = 'dot' }
+        opts.on("--doh-h1", "use resolve type of doh (http/1.1)") { |v| @options[:dns_type] = 'doh_h1' }
         opts.on("--doh-path=doh-path", "doh service path") { |v| @options[:doh_path] = v }
         opts.on("-4", "--ipv4", "use IPv4 query transport only") { |v| @options[:ipv4] = v }
         opts.on("-6", "--ipv6", "use IPv6 query transport only") { |v| @options[:ipv6] = v }
@@ -52,7 +52,7 @@ module Ddig
         @use_ipv6 = @options[:ipv6] || false
       end
 
-      case @options[:type]
+      case @options[:dns_type]
       when "all"
         resolve_all
       when "do53"

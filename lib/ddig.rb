@@ -16,11 +16,12 @@ module Ddig
     @nameservers = nameservers
 
     @nameserver = Ddig::Nameserver.new(nameservers: @nameservers)
+    @ip = Ddig::Ip.new
 
-    @do53_ipv4 = Ddig::Resolver::Do53.new(hostname: @hostname, nameservers: @nameserver.servers, ip: :ipv4).lookup
-    @do53_ipv6 = Ddig::Resolver::Do53.new(hostname: @hostname, nameservers: @nameserver.servers, ip: :ipv6).lookup
+    @do53_ipv4 = Ddig::Resolver::Do53.new(hostname: @hostname, nameservers: @nameserver.servers, ip: :ipv4).lookup if Ddig::Ip.enable_ipv4?
+    @do53_ipv6 = Ddig::Resolver::Do53.new(hostname: @hostname, nameservers: @nameserver.servers, ip: :ipv6).lookup if Ddig::Ip.enable_ipv6?
 
-    @ddr = Ddig::Ddr.new(nameservers: @nameservers)
+    @ddr = Ddig::Ddr.new(nameservers: @nameservers, ip: @ip.ip_type)
 
     {
       do53: {

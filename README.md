@@ -123,9 +123,9 @@ doh.aaaa
 ### CLI
 - Usage
 ```
-# ddig --help
+$ ddig --help
 Usage: ddig [options] hostname
-    -t, --type={all|do53|dot}        resolve type (default: all)
+    -d, --dns-type={all|do53|dot}    resolve type (default: all)
         --udp                        use resolve type of udp(do53)
         --dot                        use resolve type of dot
         --doh-h1                     use resolve type of doh (http/1.1)

@@ -28,6 +28,7 @@ If bundler is not being used to manage dependencies, install the gem by executin
     $ gem install ddig
 
 ## Usage
+### Ruby
 
 ```ruby
 ddig = Ddig.lookup('dns.google', nameservers: ['8.8.8.8', '2001:4860:4860::8888'])
@@ -120,6 +121,26 @@ doh.aaaa
 ```
 
 ### CLI
+- Usage
+```
+# ddig --help
+Usage: ddig [options] hostname
+    -t, --type={all|do53|dot}        resolve type (default: all)
+        --udp                        use resolve type of udp(do53)
+        --dot                        use resolve type of dot
+        --doh-h1                     use resolve type of doh (http/1.1)
+        --doh-path=doh-path          doh service path
+    -4, --ipv4                       use IPv4 query transport only
+    -6, --ipv6                       use IPv6 query transport only
+    -@ipaddress|doh-hostname,        nameserver
+        --nameserver
+    -p, --port=port                  port
+        --format={text|json}         output format (default: text)
+
+    -v, --verbose                    run verbosely
+    -h, --help                       show this help message.
+        --version                    show version.
+```
 
 - UDP(Do53)
 ```sh

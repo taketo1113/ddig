@@ -28,6 +28,8 @@ module Ddig
         opts.on("--dot", "use resolve type of dot") { |v| @options[:type] = 'dot' }
         opts.on("--doh-h1", "use resolve type of doh (http/1.1)") { |v| @options[:type] = 'doh_h1' }
         opts.on("--doh-path=doh-path", "doh service path") { |v| @options[:doh_path] = v }
+        opts.on("-4", "--ipv4", "use IPv4 query transport only") { |v| @options[:ipv4] = v }
+        opts.on("-6", "--ipv6", "use IPv6 query transport only") { |v| @options[:ipv6] = v }
         opts.on("-@", "--nameserver=ipaddress|doh-hostname", "nameserver") { |v| @options[:nameserver] = v }
         opts.on("-p", "--port=port", "port") { |v| @options[:port] = v }
         opts.on("--format={text|json}", "output format (default: text)") { |v| @options[:format] = v }
@@ -45,6 +47,11 @@ module Ddig
     end
 
     def exec
+      if @options[:ipv4] || @options[:ipv6]
+        @use_ipv4 = @options[:ipv4] || false
+        @use_ipv6 = @options[:ipv6] || false
+      end
+
       case @options[:type]
       when "all"
         resolve_all
@@ -58,7 +65,7 @@ module Ddig
     end
 
     def resolve_all
-      @ddig = Ddig.lookup(@hostname, nameservers: @options[:nameserver])
+      @ddig = Ddig.lookup(@hostname, nameservers: @options[:nameserver], use_ipv4: @use_ipv4, use_ipv6: @use_ipv6)
 
       if @options[:format] == 'json'
         # TODO: to_json
@@ -69,7 +76,13 @@ module Ddig
     end
 
     def resolve_do53
-      do53 = Ddig::Resolver::Do53.new(hostname: @hostname, nameservers: @options[:nameserver]).lookup
+      ip = Ddig::Ip.new(use_ipv4: @use_ipv4, use_ipv6: @use_ipv6)
+      do53 = Ddig::Resolver::Do53.new(hostname: @hostname, nameservers: @options[:nameserver], ip: ip.ip_type).lookup
+
+      if do53.nil?
+        puts "Error: Could not lookup wit nameserver: #{@options[:nameserver]}"
+        exit
+      end
 
       do53.a.each do |address|
         rr_type = 'A'

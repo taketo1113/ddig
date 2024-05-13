@@ -67,9 +67,9 @@ module Ddig
 
       def to_s
         if ['http/1.1', 'h2', 'h3'].include?(@protocol)
-          "#{@protocol}: #{@target}:#{@port} (#{@address}),\tpath: #{@dohpath},\tunencrypted_resolver: #{@unencrypted_resolver}, \tverify cert: #{@verify}"
+          "#{@protocol}: #{@target}:#{@port} (#{@address}),\tpath: #{@dohpath},\tunencrypted_resolver: #{@unencrypted_resolver}, \tverify cert: #{@verify_cert.verify}"
         else
-          "#{@protocol}: #{@target}:#{@port} (#{@address}),\tunencrypted_resolver: #{@unencrypted_resolver}, \tverify cert: #{@verify}"
+          "#{@protocol}: #{@target}:#{@port} (#{@address}),\tunencrypted_resolver: #{@unencrypted_resolver}, \tverify cert: #{@verify_cert.verify}"
         end
       end
 

@@ -130,6 +130,7 @@ Usage: ddig [options] hostname
         --dot                        use resolve type of dot
         --doh-h1                     use resolve type of doh (http/1.1)
         --doh-path=doh-path          doh service path
+        --ddr                        discover designated resolvers via ddr (discovery of designated resolvers)
     -4, --ipv4                       use IPv4 query transport only
     -6, --ipv6                       use IPv6 query transport only
     -@ipaddress|doh-hostname,        nameserver
@@ -176,6 +177,25 @@ dns.google	AAAA	2001:4860:4860::8844
 # SERVER(Hostname): dns.google
 # SERVER(Path): /dns-query{?dns}
 # PORT: 443
+```
+
+- DDR (Discovery of Designated Resolvers)
+```sh
+$ ddig --ddr --nameserver 8.8.8.8
+dot: dns.google:853 (8.8.8.8),	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+dot: dns.google:853 (8.8.4.4),	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+dot: dns.google:853 (2001:4860:4860::8844),	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+dot: dns.google:853 (2001:4860:4860::8888),	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+h2: dns.google:443 (8.8.8.8),	path: /dns-query{?dns},	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+h2: dns.google:443 (8.8.4.4),	path: /dns-query{?dns},	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+h2: dns.google:443 (2001:4860:4860::8844),	path: /dns-query{?dns},	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+h2: dns.google:443 (2001:4860:4860::8888),	path: /dns-query{?dns},	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+h3: dns.google:443 (8.8.4.4),	path: /dns-query{?dns},	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+h3: dns.google:443 (8.8.8.8),	path: /dns-query{?dns},	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+h3: dns.google:443 (2001:4860:4860::8888),	path: /dns-query{?dns},	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+h3: dns.google:443 (2001:4860:4860::8844),	path: /dns-query{?dns},	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+
+# SERVER: 8.8.8.8
 ```
 
 ## Development

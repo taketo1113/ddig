@@ -13,7 +13,7 @@ module Ddig
 
       parse_options
 
-      if @hostname.nil?
+      unless valid_options?
         puts @option_parser
         exit
       end
@@ -28,6 +28,7 @@ module Ddig
         opts.on("--dot", "use resolve type of dot") { |v| @options[:dns_type] = 'dot' }
         opts.on("--doh-h1", "use resolve type of doh (http/1.1)") { |v| @options[:dns_type] = 'doh_h1' }
         opts.on("--doh-path=doh-path", "doh service path") { |v| @options[:doh_path] = v }
+        opts.on("--ddr", "discover designated resolvers via ddr (discovery of designated resolvers)") { |v| @options[:ddr] = v }
         opts.on("-4", "--ipv4", "use IPv4 query transport only") { |v| @options[:ipv4] = v }
         opts.on("-6", "--ipv6", "use IPv6 query transport only") { |v| @options[:ipv6] = v }
         opts.on("-@", "--nameserver=ipaddress|doh-hostname", "nameserver") { |v| @options[:nameserver] = v }
@@ -46,21 +47,39 @@ module Ddig
       @hostname = @args[0]
     end
 
+    def valid_options?
+      if @hostname.nil?
+        if @options[:ddr]
+          return true
+        end
+
+        return false
+      end
+
+      return true
+    end
+
     def exec
       if @options[:ipv4] || @options[:ipv6]
         @use_ipv4 = @options[:ipv4] || false
         @use_ipv6 = @options[:ipv6] || false
       end
 
-      case @options[:dns_type]
-      when "all"
-        resolve_all
-      when "do53"
-        resolve_do53
-      when "dot"
-        resolve_dot
-      when "doh_h1"
-        resolve_doh_h1
+      unless @hostname.nil?
+        case @options[:dns_type]
+        when "all"
+          resolve_all
+        when "do53"
+          resolve_do53
+        when "dot"
+          resolve_dot
+        when "doh_h1"
+          resolve_doh_h1
+        end
+      end
+
+      if @options[:ddr]
+        resolve_ddr
       end
     end
 
@@ -136,6 +155,22 @@ module Ddig
       puts "# SERVER(Hostname): #{doh.server}"
       puts "# SERVER(Path): #{doh.dohpath}"
       puts "# PORT: #{doh.port}"
+    end
+
+    def resolve_ddr
+      ip = Ddig::Ip.new(use_ipv4: @use_ipv4, use_ipv6: @use_ipv6)
+      ddr = Ddig::Ddr.new(nameservers: @options[:nameserver], ip: ip.ip_type)
+
+      ddr.designated_resolvers.each_with_index do |designated_resolver, index|
+        if ['http/1.1', 'h2', 'h3'].include?(designated_resolver.protocol)
+          puts "#{designated_resolver.protocol}: #{designated_resolver.target}:#{designated_resolver.port} (#{designated_resolver.address}),\tpath: #{designated_resolver.dohpath},\tunencrypted_resolver: #{designated_resolver.unencrypted_resolver}, \tverify cert: #{designated_resolver.verify}"
+        else
+          puts "#{designated_resolver.protocol}: #{designated_resolver.target}:#{designated_resolver.port} (#{designated_resolver.address}),\tunencrypted_resolver: #{designated_resolver.unencrypted_resolver}, \tverify cert: #{designated_resolver.verify}"
+        end
+      end
+
+      puts
+      puts "# SERVER: #{ddr.nameservers.join(', ')}"
     end
   end
 end

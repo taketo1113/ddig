@@ -3,6 +3,7 @@ module Ddig
     class DesignatedResolver
       attr_reader :unencrypted_resolver, :target, :protocol, :port, :dohpath, :address, :ip
       attr_reader :verify_cert
+      attr_reader :hostname, :a, :aaaa, :errors
 
       PROTOCOLS = ['http/1.1', 'h2', 'h3', 'dot', 'doq']
 
@@ -28,6 +29,36 @@ module Ddig
       def verify
         @verify_cert = VerifyCert.new(hostname: @target, address: @address, port: @port, unencrypted_resolver: @unencrypted_resolver)
         @verify_cert.verify
+      end
+
+      def lookup(hostname)
+        @hostname = hostname
+        @errors = []
+
+        case @protocol
+        when 'dot'
+          dot = Ddig::Resolver::Dot.new(hostname: @hostname, server: @address, server_name: @target, port: @port).lookup
+
+          unless dot.nil?
+            @a = dot.a
+            @aaaa = dot.aaaa
+
+            return self
+          end
+
+        when 'http/1.1', 'h2', 'h3'
+          doh = Ddig::Resolver::DohH1.new(hostname: @hostname, server: @address, address: @address, dohpath: @dohpath, port: @port).lookup
+
+          unless doh.nil?
+            @a = doh.a
+            @aaaa = doh.aaaa
+
+            return self
+          end
+
+        when 'doq'
+          @errors << "#{@protocol} is not supportted protocol"
+        end
       end
 
       # Set default port by protocol

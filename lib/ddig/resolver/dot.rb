@@ -74,6 +74,22 @@ module Ddig
           ssl_socket
         end
       end
+
+      def to_cli
+        @a.each do |address|
+          rr_type = 'A'
+          puts "#{@hostname}\t#{rr_type}\t#{address}"
+        end
+        @aaaa.each do |address|
+          rr_type = 'AAAA'
+          puts "#{@hostname}\t#{rr_type}\t#{address}"
+        end
+
+        puts
+        puts "# SERVER(Address): #{@server}"
+        #puts "# SERVER(Hostname): #{@server_name}"
+        puts "# PORT: #{@port}"
+      end
     end
   end
 end

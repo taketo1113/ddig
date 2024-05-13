@@ -129,6 +129,15 @@ module Ddig
       end
     end
 
+    def to_cli
+      @designated_resolvers.each do |designated_resolver|
+        puts designated_resolver.to_s
+      end
+
+      puts
+      puts "# SERVER: #{@nameservers.join(', ')}"
+    end
+
     def set_nameservers
       @nameservers = @nameserver.servers
 

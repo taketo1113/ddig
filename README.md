@@ -143,6 +143,43 @@ Usage: ddig [options] hostname
         --version                    show version.
 ```
 
+```sh
+$ ddig --nameserver 8.8.8.8 dns.google
+# Do53 (IPv4)
+dns.google	A	8.8.4.4
+dns.google	A	8.8.8.8
+dns.google	AAAA	2001:4860:4860::8844
+dns.google	AAAA	2001:4860:4860::8888
+
+# SERVER: 8.8.8.8
+
+# DDR
+## DDR (#0) - dot: dns.google:853 (8.8.4.4),	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+dns.google	A	8.8.4.4
+dns.google	A	8.8.8.8
+dns.google	AAAA	2001:4860:4860::8844
+dns.google	AAAA	2001:4860:4860::8888
+
+# SERVER(Address): 8.8.4.4
+# PORT: 853
+
+...
+
+# SERVER(Address): 2001:4860:4860::8888
+# PORT: 853
+
+## DDR (#6) - h2: dns.google:443 (2001:4860:4860::8888),	path: /dns-query{?dns},	unencrypted_resolver: 8.8.8.8, 	verify cert: true
+dns.google	A	8.8.8.8
+dns.google	A	8.8.4.4
+dns.google	AAAA	2001:4860:4860::8844
+dns.google	AAAA	2001:4860:4860::8888
+
+# SERVER(Hostname): 2001:4860:4860::8888
+# SERVER(Path): /dns-query{?dns}
+# PORT: 443
+...
+```
+
 - UDP(Do53)
 ```sh
 $ ddig --udp --nameserver 8.8.8.8 dns.google

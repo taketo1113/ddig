@@ -33,6 +33,20 @@ module Ddig
         self
       end
 
+      def to_cli
+        @a.each do |address|
+          rr_type = 'A'
+          puts "#{@hostname}\t#{rr_type}\t#{address}"
+        end
+        @aaaa.each do |address|
+          rr_type = 'AAAA'
+          puts "#{@hostname}\t#{rr_type}\t#{address}"
+        end
+
+        puts
+        puts "# SERVER: #{@nameservers.join(', ')}"
+      end
+
       def set_nameservers
         @nameservers = @nameserver.servers
 

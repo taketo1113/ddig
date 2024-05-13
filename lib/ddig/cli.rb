@@ -23,7 +23,7 @@ module Ddig
       @option_parser = OptionParser.new do |opts|
         opts.banner = "Usage: ddig [options] hostname"
 
-        opts.on("-d", "--dns-type={all|do53|dot}", "resolve type (default: all)") { |v| @options[:dns_type] = v }
+        opts.on("-d", "--dns-type={all|do53|dot|doh_h1}", "resolve type (default: all)") { |v| @options[:dns_type] = v }
         opts.on("--udp", "use resolve type of udp(do53)") { |v| @options[:dns_type] = 'do53' }
         opts.on("--dot", "use resolve type of dot") { |v| @options[:dns_type] = 'dot' }
         opts.on("--doh-h1", "use resolve type of doh (http/1.1)") { |v| @options[:dns_type] = 'doh_h1' }
@@ -65,21 +65,20 @@ module Ddig
         @use_ipv6 = @options[:ipv6] || false
       end
 
-      unless @hostname.nil?
-        case @options[:dns_type]
-        when "all"
-          resolve_all
-        when "do53"
-          resolve_do53
-        when "dot"
-          resolve_dot
-        when "doh_h1"
-          resolve_doh_h1
-        end
-      end
-
       if @options[:ddr]
         resolve_ddr
+        exit
+      end
+
+      case @options[:dns_type]
+      when "all"
+        resolve_all
+      when "do53"
+        resolve_do53
+      when "dot"
+        resolve_dot
+      when "doh_h1"
+        resolve_doh_h1
       end
     end
 
@@ -88,9 +87,27 @@ module Ddig
 
       if @options[:format] == 'json'
         # TODO: to_json
-        puts @ddig
       else
-        puts @ddig
+        unless @ddig[:do53][:ipv4].nil?
+          puts "# Do53 (IPv4)"
+          @ddig[:do53][:ipv4].to_cli
+          puts
+        end
+
+        unless @ddig[:do53][:ipv6].nil?
+          puts "# Do53 (IPv6)"
+          @ddig[:do53][:ipv6].to_cli
+          puts
+        end
+
+        unless @ddig[:ddr].nil?
+          puts "# DDR"
+          @ddig[:ddr].each_with_index do |designated_resolver, index|
+            puts "## DDR (##{index}) - #{designated_resolver.to_s}"
+            designated_resolver.to_cli
+            puts
+          end
+        end
       end
     end
 
@@ -103,35 +120,13 @@ module Ddig
         exit
       end
 
-      do53.a.each do |address|
-        rr_type = 'A'
-        puts "#{@hostname}\t#{rr_type}\t#{address}"
-      end
-      do53.aaaa.each do |address|
-        rr_type = 'AAAA'
-        puts "#{@hostname}\t#{rr_type}\t#{address}"
-      end
-
-      puts
-      puts "# SERVER: #{do53.nameservers.join(', ')}"
+      do53.to_cli
     end
 
     def resolve_dot
       dot = Ddig::Resolver::Dot.new(hostname: @hostname, server: @options[:nameserver], port: @options[:port]).lookup
 
-      dot.a.each do |address|
-        rr_type = 'A'
-        puts "#{@hostname}\t#{rr_type}\t#{address}"
-      end
-      dot.aaaa.each do |address|
-        rr_type = 'AAAA'
-        puts "#{@hostname}\t#{rr_type}\t#{address}"
-      end
-
-      puts
-      puts "# SERVER(Address): #{dot.server}"
-      #puts "# SERVER(Hostname): #{dot.server_name}"
-      puts "# PORT: #{dot.port}"
+      dot.to_cli
     end
 
     def resolve_doh_h1
@@ -142,35 +137,14 @@ module Ddig
 
       doh = Ddig::Resolver::DohH1.new(hostname: @hostname, server: @options[:nameserver], dohpath: @options[:doh_path], port: @options[:port]).lookup
 
-      doh.a.each do |address|
-        rr_type = 'A'
-        puts "#{@hostname}\t#{rr_type}\t#{address}"
-      end
-      doh.aaaa.each do |address|
-        rr_type = 'AAAA'
-        puts "#{@hostname}\t#{rr_type}\t#{address}"
-      end
-
-      puts
-      puts "# SERVER(Hostname): #{doh.server}"
-      puts "# SERVER(Path): #{doh.dohpath}"
-      puts "# PORT: #{doh.port}"
+      doh.to_cli
     end
 
     def resolve_ddr
       ip = Ddig::Ip.new(use_ipv4: @use_ipv4, use_ipv6: @use_ipv6)
       ddr = Ddig::Ddr.new(nameservers: @options[:nameserver], ip: ip.ip_type)
 
-      ddr.designated_resolvers.each_with_index do |designated_resolver, index|
-        if ['http/1.1', 'h2', 'h3'].include?(designated_resolver.protocol)
-          puts "#{designated_resolver.protocol}: #{designated_resolver.target}:#{designated_resolver.port} (#{designated_resolver.address}),\tpath: #{designated_resolver.dohpath},\tunencrypted_resolver: #{designated_resolver.unencrypted_resolver}, \tverify cert: #{designated_resolver.verify}"
-        else
-          puts "#{designated_resolver.protocol}: #{designated_resolver.target}:#{designated_resolver.port} (#{designated_resolver.address}),\tunencrypted_resolver: #{designated_resolver.unencrypted_resolver}, \tverify cert: #{designated_resolver.verify}"
-        end
-      end
-
-      puts
-      puts "# SERVER: #{ddr.nameservers.join(', ')}"
+      ddr.to_cli
     end
   end
 end

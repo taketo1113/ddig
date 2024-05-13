@@ -56,6 +56,22 @@ module Ddig
           return []
         end
       end
+
+      def to_cli
+        @a.each do |address|
+          rr_type = 'A'
+          puts "#{@hostname}\t#{rr_type}\t#{address}"
+        end
+        @aaaa.each do |address|
+          rr_type = 'AAAA'
+          puts "#{@hostname}\t#{rr_type}\t#{address}"
+        end
+
+        puts
+        puts "# SERVER(Hostname): #{@server}"
+        puts "# SERVER(Path): #{@dohpath}"
+        puts "# PORT: #{@port}"
+      end
     end
   end
 end

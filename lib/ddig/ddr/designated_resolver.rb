@@ -3,7 +3,7 @@ module Ddig
     class DesignatedResolver
       attr_reader :unencrypted_resolver, :target, :protocol, :port, :dohpath, :address, :ip
       attr_reader :verify_cert
-      attr_reader :hostname, :a, :aaaa, :errors
+      attr_reader :hostname, :a, :aaaa, :resolver, :errors
 
       PROTOCOLS = ['http/1.1', 'h2', 'h3', 'dot', 'doq']
 
@@ -37,27 +37,39 @@ module Ddig
 
         case @protocol
         when 'dot'
-          dot = Ddig::Resolver::Dot.new(hostname: @hostname, server: @address, server_name: @target, port: @port).lookup
+          @resolver = Ddig::Resolver::Dot.new(hostname: @hostname, server: @address, server_name: @target, port: @port).lookup
 
-          unless dot.nil?
-            @a = dot.a
-            @aaaa = dot.aaaa
+          unless @resolver.nil?
+            @a = @resolver.a
+            @aaaa = @resolver.aaaa
 
             return self
           end
 
         when 'http/1.1', 'h2', 'h3'
-          doh = Ddig::Resolver::DohH1.new(hostname: @hostname, server: @address, address: @address, dohpath: @dohpath, port: @port).lookup
+          @resolver = Ddig::Resolver::DohH1.new(hostname: @hostname, server: @address, address: @address, dohpath: @dohpath, port: @port).lookup
 
-          unless doh.nil?
-            @a = doh.a
-            @aaaa = doh.aaaa
+          unless @resolver.nil?
+            @a = @resolver.a
+            @aaaa = @resolver.aaaa
 
             return self
           end
 
         when 'doq'
           @errors << "#{@protocol} is not supportted protocol"
+        end
+      end
+
+      def to_cli
+        @resolver.to_cli
+      end
+
+      def to_s
+        if ['http/1.1', 'h2', 'h3'].include?(@protocol)
+          "#{@protocol}: #{@target}:#{@port} (#{@address}),\tpath: #{@dohpath},\tunencrypted_resolver: #{@unencrypted_resolver}, \tverify cert: #{@verify}"
+        else
+          "#{@protocol}: #{@target}:#{@port} (#{@address}),\tunencrypted_resolver: #{@unencrypted_resolver}, \tverify cert: #{@verify}"
         end
       end
 

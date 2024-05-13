@@ -24,6 +24,9 @@ module Ddig
     @do53_ipv6 = Ddig::Resolver::Do53.new(hostname: @hostname, nameservers: @nameserver.servers, ip: :ipv6).lookup unless @ip.ip_type == :ipv4
 
     @ddr = Ddig::Ddr.new(nameservers: @nameservers, ip: @ip.ip_type)
+    @ddr.designated_resolvers.each do |designated_resolver|
+      designated_resolver.lookup(@hostname)
+    end
 
     {
       do53: {

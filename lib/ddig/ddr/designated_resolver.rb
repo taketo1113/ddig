@@ -77,9 +77,7 @@ module Ddig
       # ref: https://www.rfc-editor.org/rfc/rfc9461.html#section-4.2
       def set_default_port
         case @protocol
-        when 'http/1.1'
-          @port = 80
-        when 'h2', 'h3'
+        when 'http/1.1', 'h2', 'h3'
           @port = 443
         when 'dot', 'doq'
           @port = 853

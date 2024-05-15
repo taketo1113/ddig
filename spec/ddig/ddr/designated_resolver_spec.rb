@@ -6,7 +6,7 @@ RSpec.describe Ddig::Ddr::DesignatedResolver do
       it "return default port with protocol: http/1.1" do
         @designated_resolver = Ddig::Ddr::DesignatedResolver.new(unencrypted_resolver: '8.8.8.8', target: 'dns.google', protocol: 'http/1.1', port: nil, dohpath: nil, address: '8.8.4.4', ip: :ipv4)
 
-        expect(@designated_resolver.port).to eq 80
+        expect(@designated_resolver.port).to eq 443
       end
 
       it "return default port with protocol: h2" do

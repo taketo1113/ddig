@@ -1,4 +1,5 @@
 require 'resolv'
+require 'json'
 
 module Ddig
   module Resolver
@@ -31,6 +32,20 @@ module Ddig
         end
 
         self
+      end
+
+      def as_json(*)
+        {
+          a: @a,
+          aaaa: @aaaa,
+          hostname: @hostname,
+          nameservers: @nameservers,
+          ip: @ip,
+        }
+      end
+
+      def to_json(*args)
+        as_json.to_json
       end
 
       def to_cli

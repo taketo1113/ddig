@@ -1,6 +1,7 @@
 require 'net/http'
 require 'resolv'
 require 'base64'
+require 'json'
 
 require_relative 'dns_message'
 
@@ -55,6 +56,22 @@ module Ddig
           http_response.value
           return []
         end
+      end
+
+      def as_json(*)
+        {
+          a: @a,
+          aaaa: @aaaa,
+          hostname: @hostname,
+          server: @server,
+          address: @address,
+          dohpath: @dohpath,
+          port: @port,
+        }
+      end
+
+      def to_json(*args)
+        as_json.to_json
       end
 
       def to_cli

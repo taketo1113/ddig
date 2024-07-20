@@ -189,4 +189,21 @@ RSpec.describe Ddig::Resolver::Do53 do
       expect(@do53.to_json).to include 'dns.google'
     end
   end
+
+  context "#to_cli" do
+    before(:each) do
+      @do53 = Ddig::Resolver::Do53.new(hostname: 'dns.google')
+      @do53.lookup
+    end
+
+    it "a/aaaa return values" do
+      # a
+      expect { @do53.to_cli }.to output(/8.8.8.8/).to_stdout
+      expect { @do53.to_cli }.to output(/8.8.4.4/).to_stdout
+
+      # aaaa
+      expect { @do53.to_cli }.to output(/2001:4860:4860::8888/).to_stdout
+      expect { @do53.to_cli }.to output(/2001:4860:4860::8844/).to_stdout
+    end
+  end
 end

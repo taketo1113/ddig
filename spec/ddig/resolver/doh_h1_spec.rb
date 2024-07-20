@@ -153,4 +153,33 @@ RSpec.describe Ddig::Resolver::DohH1 do
       expect(@doh.to_json).to include '443'
     end
   end
+
+  context "#to_cli" do
+    before(:each) do
+      @doh = Ddig::Resolver::DohH1.new(hostname: 'dns.google', server: 'dns.google', dohpath: '/dns-query{?dns}')
+      @doh.lookup
+    end
+
+    it "a/aaaa return values" do
+      # a
+      expect { @doh.to_cli }.to output(/8.8.8.8/).to_stdout
+      expect { @doh.to_cli }.to output(/8.8.4.4/).to_stdout
+
+      # aaaa
+      expect { @doh.to_cli }.to output(/2001:4860:4860::8888/).to_stdout
+      expect { @doh.to_cli }.to output(/2001:4860:4860::8844/).to_stdout
+    end
+
+    it "hostname return values" do
+      expect { @doh.to_cli }.to output(/dns.google/).to_stdout
+    end
+
+    it "dohpath return values" do
+      expect { @doh.to_cli }.to output(/\/dns-query{\?dns}/).to_stdout
+    end
+
+    it "port return values" do
+      expect { @doh.to_cli }.to output(/443/).to_stdout
+    end
+  end
 end

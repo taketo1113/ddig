@@ -143,4 +143,29 @@ RSpec.describe Ddig::Resolver::Dot do
       expect(@dot.to_json).to include '853'
     end
   end
+
+  context "#to_cli" do
+    before(:each) do
+      @dot = Ddig::Resolver::Dot.new(hostname: 'dns.google', server: 'dns.google')
+      @dot.lookup
+    end
+
+    it "a/aaaa return values" do
+      # a
+      expect { @dot.to_cli }.to output(/8.8.8.8/).to_stdout
+      expect { @dot.to_cli }.to output(/8.8.4.4/).to_stdout
+
+      # aaaa
+      expect { @dot.to_cli }.to output(/2001:4860:4860::8888/).to_stdout
+      expect { @dot.to_cli }.to output(/2001:4860:4860::8844/).to_stdout
+    end
+
+    it "server return values" do
+      expect { @dot.to_cli }.to output(/dns.google/).to_stdout
+    end
+
+    it "port return values" do
+      expect { @dot.to_cli }.to output(/853/).to_stdout
+    end
+  end
 end

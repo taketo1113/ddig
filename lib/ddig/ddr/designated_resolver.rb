@@ -1,3 +1,5 @@
+require 'json'
+
 module Ddig
   class Ddr
     class DesignatedResolver
@@ -59,6 +61,27 @@ module Ddig
         when 'doq'
           @errors << "#{@protocol} is not supportted protocol"
         end
+      end
+
+      def as_json(*)
+        {
+          unencrypted_resolver: @unencrypted_resolver,
+          target: @target,
+          protocol: @protocol,
+          port: @port,
+          dohpath: @dohpath,
+          address: @address,
+          ip: @ip,
+          verify: @verify_cert&.verify,
+          hostname: @hostname,
+          a: @a,
+          aaaa: @aaaa,
+          errors: @errors,
+        }
+      end
+
+      def to_json(*args)
+        as_json.to_json
       end
 
       def to_cli

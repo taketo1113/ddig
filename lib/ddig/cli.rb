@@ -86,7 +86,8 @@ module Ddig
       @ddig = Ddig.lookup(@hostname, nameservers: @options[:nameserver], use_ipv4: @use_ipv4, use_ipv6: @use_ipv6)
 
       if @options[:format] == 'json'
-        # TODO: to_json
+        puts @ddig.to_json
+
       else
         unless @ddig[:do53][:ipv4].nil?
           puts "# Do53 (IPv4)"

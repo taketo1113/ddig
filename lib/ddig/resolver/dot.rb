@@ -1,5 +1,6 @@
 require 'openssl'
 require 'resolv'
+require 'json'
 
 require_relative 'dns_message'
 
@@ -73,6 +74,21 @@ module Ddig
 
           ssl_socket
         end
+      end
+
+      def as_json(*)
+        {
+          a: @a,
+          aaaa: @aaaa,
+          hostname: @hostname,
+          server: @server,
+          server_name: @server_name,
+          port: @port,
+        }
+      end
+
+      def to_json(*args)
+        as_json.to_json
       end
 
       def to_cli

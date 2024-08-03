@@ -1,4 +1,5 @@
 require 'resolv'
+require 'json'
 
 require_relative "ddr/verify_cert"
 require_relative "ddr/designated_resolver"
@@ -127,6 +128,19 @@ module Ddig
         designated_resolver.verify
         designated_resolver
       end
+    end
+
+    def as_json(*)
+      {
+        designated_resolvers: @designated_resolvers.map { |designated_resolver| designated_resolver.as_json },
+        hostname: @hostname,
+        nameservers: @nameservers,
+        ip: @ip,
+      }
+    end
+
+    def to_json(*args)
+      as_json.to_json
     end
 
     def to_cli

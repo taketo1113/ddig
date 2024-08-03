@@ -139,4 +139,71 @@ RSpec.describe Ddig::Resolver::Do53 do
       expect(@do53.ip).to eq :ipv6
     end
   end
+
+  context "#as_json" do
+    before(:each) do
+      @do53 = Ddig::Resolver::Do53.new(hostname: 'dns.google')
+      @do53.lookup
+    end
+
+    it "a/aaaa return values" do
+      # a
+      expect(@do53.as_json[:a]).to include "8.8.8.8"
+      expect(@do53.as_json[:a]).to include "8.8.4.4"
+
+      # aaaa
+      expect(@do53.as_json[:aaaa]).to include "2001:4860:4860::8844"
+      expect(@do53.as_json[:aaaa]).to include "2001:4860:4860::8888"
+    end
+
+    it "hostname set value" do
+      expect(@do53.as_json[:hostname]).to eq 'dns.google'
+    end
+
+    it "nameservers set values" do
+      expect(@do53.as_json[:nameservers]).not_to eq nil
+    end
+
+    it "ip is nil" do
+      expect(@do53.as_json[:ip]).to eq nil
+    end
+  end
+
+  context "#to_json" do
+    before(:each) do
+      @do53 = Ddig::Resolver::Do53.new(hostname: 'dns.google')
+      @do53.lookup
+    end
+
+    it "a/aaaa return values" do
+      # a
+      expect(@do53.to_json).to include "8.8.8.8"
+      expect(@do53.to_json).to include "8.8.4.4"
+
+      # aaaa
+      expect(@do53.to_json).to include "2001:4860:4860::8844"
+      expect(@do53.to_json).to include "2001:4860:4860::8888"
+    end
+
+    it "hostname set value" do
+      expect(@do53.to_json).to include 'dns.google'
+    end
+  end
+
+  context "#to_cli" do
+    before(:each) do
+      @do53 = Ddig::Resolver::Do53.new(hostname: 'dns.google')
+      @do53.lookup
+    end
+
+    it "a/aaaa return values" do
+      # a
+      expect { @do53.to_cli }.to output(/8.8.8.8/).to_stdout
+      expect { @do53.to_cli }.to output(/8.8.4.4/).to_stdout
+
+      # aaaa
+      expect { @do53.to_cli }.to output(/2001:4860:4860::8888/).to_stdout
+      expect { @do53.to_cli }.to output(/2001:4860:4860::8844/).to_stdout
+    end
+  end
 end

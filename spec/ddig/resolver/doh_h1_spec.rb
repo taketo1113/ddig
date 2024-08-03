@@ -87,4 +87,99 @@ RSpec.describe Ddig::Resolver::DohH1 do
       expect(@doh.port).to eq 8443
     end
   end
+
+  context "#as_json" do
+    before(:each) do
+      @doh = Ddig::Resolver::DohH1.new(hostname: 'dns.google', server: 'dns.google', dohpath: '/dns-query{?dns}')
+      @doh.lookup
+    end
+
+    it "a/aaaa return values" do
+      # a
+      expect(@doh.as_json[:a]).to include "8.8.8.8"
+      expect(@doh.as_json[:a]).to include "8.8.4.4"
+
+      # aaaa
+      expect(@doh.as_json[:aaaa]).to include "2001:4860:4860::8844"
+      expect(@doh.as_json[:aaaa]).to include "2001:4860:4860::8888"
+    end
+
+    it "hostname set value" do
+      expect(@doh.as_json[:hostname]).to eq 'dns.google'
+    end
+
+    it "server set value" do
+      expect(@doh.as_json[:server]).to eq 'dns.google'
+    end
+
+    it "address set nil" do
+      expect(@doh.as_json[:address]).to eq nil
+    end
+
+    it "dohpath set value" do
+      expect(@doh.as_json[:dohpath]).to eq '/dns-query{?dns}'
+    end
+
+    it "port set value" do
+      expect(@doh.as_json[:port]).to eq 443
+    end
+  end
+
+  context "#to_json" do
+    before(:each) do
+      @doh = Ddig::Resolver::DohH1.new(hostname: 'dns.google', server: 'dns.google', dohpath: '/dns-query{?dns}')
+      @doh.lookup
+    end
+
+    it "a/aaaa return values" do
+      # a
+      expect(@doh.to_json).to include "8.8.8.8"
+      expect(@doh.to_json).to include "8.8.4.4"
+
+      # aaaa
+      expect(@doh.to_json).to include "2001:4860:4860::8844"
+      expect(@doh.to_json).to include "2001:4860:4860::8888"
+    end
+
+    it "hostname set value" do
+      expect(@doh.to_json).to include 'dns.google'
+    end
+
+    it "dohpath set value" do
+      expect(@doh.to_json).to include '/dns-query{?dns}'
+    end
+
+    it "port set value" do
+      expect(@doh.to_json).to include '443'
+    end
+  end
+
+  context "#to_cli" do
+    before(:each) do
+      @doh = Ddig::Resolver::DohH1.new(hostname: 'dns.google', server: 'dns.google', dohpath: '/dns-query{?dns}')
+      @doh.lookup
+    end
+
+    it "a/aaaa return values" do
+      # a
+      expect { @doh.to_cli }.to output(/8.8.8.8/).to_stdout
+      expect { @doh.to_cli }.to output(/8.8.4.4/).to_stdout
+
+      # aaaa
+      expect { @doh.to_cli }.to output(/2001:4860:4860::8888/).to_stdout
+      expect { @doh.to_cli }.to output(/2001:4860:4860::8844/).to_stdout
+    end
+
+    it "hostname return values" do
+      expect { @doh.to_cli }.to output(/dns.google/).to_stdout
+    end
+
+    it "dohpath return values" do
+      expect { @doh.to_cli }.to output(/\/dns-query{\?dns}/).to_stdout
+    end
+
+    it "port return values" do
+      expect { @doh.to_cli }.to output(/443/).to_stdout
+    end
+  end
 end

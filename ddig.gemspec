@@ -31,5 +31,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "resolv", "~> 0.3.0"
-  spec.add_dependency "base64" if RUBY_VERSION >= '3.3'
+  spec.add_dependency "base64"
 end

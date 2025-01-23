@@ -30,6 +30,6 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "resolv", "~> 0.3.0"
+  spec.add_dependency "resolv", ">= 0.3.0"
   spec.add_dependency "base64"
 end

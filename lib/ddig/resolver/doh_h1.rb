@@ -88,6 +88,10 @@ module Ddig
           rr_type = 'AAAA'
           puts "#{@hostname}\t#{rr_type}\t#{address}"
         end
+        @https.each do |record|
+          rr_type = 'HTTPS'
+          puts "#{@hostname}\t#{rr_type}\tpriority: #{record[:priority]}\ttarget: #{record[:target]}\talpn: #{record[:alpn].join(', ')}"
+        end
 
         puts
         puts "# SERVER(Hostname): #{@server}"

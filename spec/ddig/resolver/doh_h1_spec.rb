@@ -173,6 +173,14 @@ RSpec.describe Ddig::Resolver::DohH1 do
       expect(@doh.to_json).to include "2001:4860:4860::8888"
     end
 
+    it "https return values" do
+      @doh = Ddig::Resolver::DohH1.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google', dohpath: '/dns-query{?dns}')
+      @doh.lookup
+
+      expect(@doh.to_json).to include "{\"priority\":2,\"target\":\"test.taketoketa.org\",\"alpn\":[\"h3\",\"h2\"]}"
+      expect(@doh.to_json).to include "{\"priority\":1,\"target\":\".\",\"alpn\":[\"h3\",\"h2\"]}"
+    end
+
     it "hostname set value" do
       expect(@doh.to_json).to include 'dns.google'
     end
@@ -200,6 +208,14 @@ RSpec.describe Ddig::Resolver::DohH1 do
       # aaaa
       expect { @doh.to_cli }.to output(/2001:4860:4860::8888/).to_stdout
       expect { @doh.to_cli }.to output(/2001:4860:4860::8844/).to_stdout
+    end
+
+    it "https return values" do
+      @doh = Ddig::Resolver::DohH1.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google', dohpath: '/dns-query{?dns}')
+      @doh.lookup
+
+      expect { @doh.to_cli }.to output(/HTTPS	priority: 2	target: test.taketoketa.org	alpn: h3, h2/).to_stdout
+      expect { @doh.to_cli }.to output(/HTTPS	priority: 1	target: .	alpn: h3, h2/).to_stdout
     end
 
     it "hostname return values" do

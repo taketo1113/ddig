@@ -73,13 +73,19 @@ module Ddig
             unless do53_v4.nil? || do53_v4.a.nil?
               do53_v4.a.each do |address|
                 designated_resolver = ::Ddig::Ddr::DesignatedResolver.new(unencrypted_resolver: unencrypted_resolver, target: target, protocol: protocol, port: port, dohpath: dohpath, address: address.to_s, ip: :ipv4)
-                @designated_resolvers << designated_resolver
+
+                if designated_resolver.errors.count.zero?
+                  @designated_resolvers << designated_resolver
+                end
               end
             end
             unless do53_v6.nil? || do53_v6.a.nil?
               do53_v6.a.each do |address|
                 designated_resolver = ::Ddig::Ddr::DesignatedResolver.new(unencrypted_resolver: unencrypted_resolver, target: target, protocol: protocol, port: port, dohpath: dohpath, address: address.to_s, ip: :ipv4)
-                @designated_resolvers << designated_resolver
+
+                if designated_resolver.errors.count.zero?
+                  @designated_resolvers << designated_resolver
+                end
               end
             end
           end
@@ -89,13 +95,19 @@ module Ddig
             unless do53_v4.nil? || do53_v4.aaaa.nil?
               do53_v4.aaaa.each do |address|
                 designated_resolver = ::Ddig::Ddr::DesignatedResolver.new(unencrypted_resolver: unencrypted_resolver, target: target, protocol: protocol, port: port, dohpath: dohpath, address: address.to_s, ip: :ipv6)
-                @designated_resolvers << designated_resolver
+
+                if designated_resolver.errors.count.zero?
+                  @designated_resolvers << designated_resolver
+                end
               end
             end
             unless do53_v6.nil? || do53_v6.aaaa.nil?
               do53_v6.aaaa.each do |address|
                 designated_resolver = ::Ddig::Ddr::DesignatedResolver.new(unencrypted_resolver: unencrypted_resolver, target: target, protocol: protocol, port: port, dohpath: dohpath, address: address.to_s, ip: :ipv6)
-                @designated_resolvers << designated_resolver
+
+                if designated_resolver.errors.count.zero?
+                  @designated_resolvers << designated_resolver
+                end
               end
             end
           end
@@ -105,7 +117,10 @@ module Ddig
             ipv4hint.each do |address|
               ip = :ipv4
               designated_resolver = ::Ddig::Ddr::DesignatedResolver.new(unencrypted_resolver: unencrypted_resolver, target: target, protocol: protocol, port: port, dohpath: dohpath, address: address.to_s, ip: ip)
-              @designated_resolvers << designated_resolver
+
+                if designated_resolver.errors.count.zero?
+                  @designated_resolvers << designated_resolver
+                end
             end
           end
 
@@ -114,7 +129,10 @@ module Ddig
             ipv6hint.each do |address|
               ip = :ipv6
               designated_resolver = ::Ddig::Ddr::DesignatedResolver.new(unencrypted_resolver: unencrypted_resolver, target: target, protocol: protocol, port: port, dohpath: dohpath, address: address.to_s, ip: ip)
-              @designated_resolvers << designated_resolver
+
+              if designated_resolver.errors.count.zero?
+                @designated_resolvers << designated_resolver
+              end
             end
           end
         end

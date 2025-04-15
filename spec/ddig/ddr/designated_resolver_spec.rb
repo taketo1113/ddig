@@ -41,9 +41,9 @@ RSpec.describe Ddig::Ddr::DesignatedResolver do
     end
 
     it "raise error with invalid protocol" do
-      expect {
-        Ddig::Ddr::DesignatedResolver.new(unencrypted_resolver: '8.8.8.8', target: 'dns.google', protocol: 'invalid', port: nil, dohpath: nil, address: '8.8.4.4', ip: :ipv4)
-      }.to raise_error(Ddig::Error)
+      @designated_resolver = Ddig::Ddr::DesignatedResolver.new(unencrypted_resolver: '8.8.8.8', target: 'dns.google', protocol: 'invalid', port: nil, dohpath: nil, address: '8.8.4.4', ip: :ipv4)
+
+      expect(@designated_resolver.errors.size).to eq 1
     end
   end
 

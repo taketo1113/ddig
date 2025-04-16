@@ -17,10 +17,12 @@ module Ddig
         @dohpath = dohpath
         @address = address
         @ip = ip
+        @errors = []
 
         # check protocol
         unless PROTOCOLS.include?(@protocol)
-          raise Error.new("Not Supportted Protocol (protocol: #{@protocol}). Suported protocol is #{PROTOCOLS.join(' / ')}")
+          @errors << "Not Supportted Protocol (protocol: #{@protocol}). Suported protocol is #{PROTOCOLS.join(' / ')}"
+          puts "#{@errors.join('\n')}"
         end
 
         if @port.nil?
@@ -35,7 +37,6 @@ module Ddig
 
       def lookup(hostname)
         @hostname = hostname
-        @errors = []
 
         case @protocol
         when 'dot'
@@ -85,6 +86,11 @@ module Ddig
       end
 
       def to_cli
+        if @resolver.nil?
+          puts "# #{@errors.join('\n# ')}"
+          return
+        end
+
         @resolver.to_cli
       end
 

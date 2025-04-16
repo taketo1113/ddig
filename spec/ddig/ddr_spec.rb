@@ -82,7 +82,7 @@ RSpec.describe Ddig::Ddr do
       expect(@designated_resolver[:hostname]).to eq nil
       expect(@designated_resolver[:a]).to eq nil
       expect(@designated_resolver[:aaaa]).to eq nil
-      expect(@designated_resolver[:errors]).to eq nil
+      expect(@designated_resolver[:errors]).to eq []
     end
 
     it "return values" do

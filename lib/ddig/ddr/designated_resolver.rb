@@ -86,6 +86,11 @@ module Ddig
       end
 
       def to_cli
+        if @resolver.nil?
+          puts "# #{@errors.join('\n# ')}"
+          return
+        end
+
         @resolver.to_cli
       end
 

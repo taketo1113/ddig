@@ -8,6 +8,13 @@ module Ddig
       attr_reader :hostname, :a, :aaaa, :resolver, :errors
 
       PROTOCOLS = ['http/1.1', 'h2', 'h3', 'dot', 'doq']
+      # Reserved ALPN
+      # https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids
+      IGNORE_PROTOCOLS = [
+        "\u001A\u001A",  "\u002A\u002A",  "\u003A\u003A",  "\u004A\u004A",  "\u005A\u005A",
+        "\u006A\u006A",  "\u007A\u007A",  "\u008A\u008A",  "\u009A\u009A",  "\u00AA\u00AA",
+        "\u00BA\u00BA",  "\u00CA\u00CA",  "\u00DA\u00DA",  "\u00EA\u00EA",  "\u00FA\u00FA"
+      ] # '**', '::', 'JJ', 'ZZ', 'jj', 'zz'
 
       def initialize(unencrypted_resolver:, target:, protocol: nil, port: nil, dohpath: nil, address: nil, ip: nil)
         @target = target
@@ -21,8 +28,12 @@ module Ddig
 
         # check protocol
         unless PROTOCOLS.include?(@protocol)
-          @errors << "Not Supportted Protocol (protocol: #{@protocol}). Suported protocol is #{PROTOCOLS.join(' / ')}"
-          puts "#{@errors.join('\n')}"
+          if IGNORE_PROTOCOLS.include?(@protocol)
+            @errors << "Skip the protocol (protocol: #{@protocol}), as it is a reserved value in ALPN."
+          else
+            @errors << "Not Supportted Protocol (protocol: #{@protocol}). Suported protocol is #{PROTOCOLS.join(' / ')}"
+            puts "#{@errors.join('\n')}"
+          end
         end
 
         if @port.nil?

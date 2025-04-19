@@ -27,7 +27,7 @@ module Ddig
         opts.on("--udp", "use resolve type of udp(do53)") { |v| @options[:dns_type] = 'do53' }
         opts.on("--dot", "use resolve type of dot") { |v| @options[:dns_type] = 'dot' }
         opts.on("--doh-h1", "use resolve type of doh (http/1.1)") { |v| @options[:dns_type] = 'doh_h1' }
-        opts.on("--doh-path=doh-path", "doh service path") { |v| @options[:doh_path] = v }
+        opts.on("--doh-path=doh-path", "doh service path (default: /dns-query{?dns})") { |v| @options[:doh_path] = v }
         opts.on("--ddr", "discover designated resolvers via ddr (discovery of designated resolvers)") { |v| @options[:ddr] = v }
         opts.on("-4", "--ipv4", "use IPv4 query transport only") { |v| @options[:ipv4] = v }
         opts.on("-6", "--ipv6", "use IPv6 query transport only") { |v| @options[:ipv6] = v }
@@ -132,8 +132,7 @@ module Ddig
 
     def resolve_doh_h1
       if @options[:nameserver].nil? || @options[:doh_path].nil?
-        puts 'ddig: doh needs option of --doh-path=doh-path'
-        exit
+        @options[:doh_path] = '/dns-query{?dns}'
       end
 
       doh = Ddig::Resolver::DohH1.new(hostname: @hostname, server: @options[:nameserver], dohpath: @options[:doh_path], port: @options[:port]).lookup

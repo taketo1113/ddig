@@ -12,7 +12,7 @@ module Ddig
       attr_reader :hostname, :server, :address, :dohpath, :port
       attr_reader :a, :aaaa
 
-      def initialize(hostname:, server:, address: nil, dohpath:, port: 443)
+      def initialize(hostname:, server:, address: nil, dohpath: '/dns-query{?dns}', port: 443)
         @hostname = hostname
         @server = server
         @address = address

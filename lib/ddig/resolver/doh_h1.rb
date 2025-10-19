@@ -10,7 +10,7 @@ module Ddig
     # DNS over HTTPS (HTTP/1.1)
     class DohH1
       attr_reader :hostname, :server, :address, :dohpath, :port
-      attr_reader :a, :aaaa
+      attr_reader :a, :aaaa, :https
 
       def initialize(hostname:, server:, address: nil, dohpath: '/dns-query{?dns}', port: 443)
         @hostname = hostname
@@ -30,6 +30,10 @@ module Ddig
         @a = get_resources(@hostname, Resolv::DNS::Resource::IN::A).map { |resource| resource.address.to_s if resource.is_a?(Resolv::DNS::Resource::IN::A) }.compact
 
         @aaaa = get_resources(@hostname, Resolv::DNS::Resource::IN::AAAA).map { |resource| resource.address.to_s if resource.is_a?(Resolv::DNS::Resource::IN::AAAA) }.compact
+
+        @https = get_resources(@hostname, Resolv::DNS::Resource::IN::HTTPS).map do |resource|
+          { priority: resource.priority, target: resource.target != Resolv::DNS::Name.create(".") ? resource.target.to_s : '.' , alpn: resource.params[:alpn].protocol_ids } if resource.is_a?(Resolv::DNS::Resource::IN::HTTPS)
+        end.compact
 
         self
       end
@@ -62,6 +66,7 @@ module Ddig
         {
           a: @a,
           aaaa: @aaaa,
+          https: @https,
           hostname: @hostname,
           server: @server,
           address: @address,
@@ -82,6 +87,10 @@ module Ddig
         @aaaa.each do |address|
           rr_type = 'AAAA'
           puts "#{@hostname}\t#{rr_type}\t#{address}"
+        end
+        @https.each do |record|
+          rr_type = 'HTTPS'
+          puts "#{@hostname}\t#{rr_type}\tpriority: #{record[:priority]}\ttarget: #{record[:target]}\talpn: #{record[:alpn].join(', ')}"
         end
 
         puts

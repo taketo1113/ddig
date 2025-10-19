@@ -17,6 +17,14 @@ RSpec.describe Ddig::Resolver::Do53 do
       expect(@do53.aaaa).to include "2001:4860:4860::8888"
     end
 
+    it "https return values" do
+      @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org')
+      @do53.lookup
+
+      expect(@do53.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@do53.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+    end
+
     it "hostname set value" do
       expect(@do53.hostname).to eq 'dns.google'
     end
@@ -46,6 +54,14 @@ RSpec.describe Ddig::Resolver::Do53 do
       # aaaa
       expect(@do53.aaaa).to include "2001:4860:4860::8844"
       expect(@do53.aaaa).to include "2001:4860:4860::8888"
+    end
+
+    it "https return values" do
+      @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org', nameservers: @nameservers)
+      @do53.lookup
+
+      expect(@do53.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@do53.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
     end
 
     it "hostname set value" do
@@ -93,6 +109,14 @@ RSpec.describe Ddig::Resolver::Do53 do
       expect(@do53.aaaa).to include "2001:4860:4860::8888"
     end
 
+    it "https return values" do
+      @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org', ip: @ip, nameservers: @nameservers)
+      @do53.lookup
+
+      expect(@do53.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@do53.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+    end
+
     it "hostname set value" do
       expect(@do53.hostname).to eq 'dns.google'
     end
@@ -127,6 +151,14 @@ RSpec.describe Ddig::Resolver::Do53 do
       expect(@do53.aaaa).to include "2001:4860:4860::8888"
     end
 
+    it "https return values" do
+      @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org', ip: @ip, nameservers: @nameservers)
+      @do53.lookup
+
+      expect(@do53.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@do53.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+    end
+
     it "hostname set value" do
       expect(@do53.hostname).to eq 'dns.google'
     end
@@ -154,6 +186,14 @@ RSpec.describe Ddig::Resolver::Do53 do
       # aaaa
       expect(@do53.as_json[:aaaa]).to include "2001:4860:4860::8844"
       expect(@do53.as_json[:aaaa]).to include "2001:4860:4860::8888"
+    end
+
+    it "https return values" do
+      @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org')
+      @do53.lookup
+
+      expect(@do53.as_json[:https]).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@do53.as_json[:https]).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
     end
 
     it "hostname set value" do
@@ -185,6 +225,14 @@ RSpec.describe Ddig::Resolver::Do53 do
       expect(@do53.to_json).to include "2001:4860:4860::8888"
     end
 
+    it "https return values" do
+      @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org')
+      @do53.lookup
+
+      expect(@do53.to_json).to include "{\"priority\":2,\"target\":\"test.taketoketa.org\",\"alpn\":[\"h3\",\"h2\"]}"
+      expect(@do53.to_json).to include "{\"priority\":1,\"target\":\".\",\"alpn\":[\"h3\",\"h2\"]}"
+    end
+
     it "hostname set value" do
       expect(@do53.to_json).to include 'dns.google'
     end
@@ -204,6 +252,14 @@ RSpec.describe Ddig::Resolver::Do53 do
       # aaaa
       expect { @do53.to_cli }.to output(/2001:4860:4860::8888/).to_stdout
       expect { @do53.to_cli }.to output(/2001:4860:4860::8844/).to_stdout
+    end
+
+    it "https return values" do
+      @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org')
+      @do53.lookup
+
+      expect { @do53.to_cli }.to output(/HTTPS	priority: 2	target: test.taketoketa.org	alpn: h3, h2/).to_stdout
+      expect { @do53.to_cli }.to output(/HTTPS	priority: 1	target: .	alpn: h3, h2/).to_stdout
     end
   end
 end

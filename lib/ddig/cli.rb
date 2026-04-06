@@ -121,13 +121,21 @@ module Ddig
         exit
       end
 
-      do53.to_cli
+      if @options[:format] == 'json'
+        puts do53.to_json
+      else
+        do53.to_cli
+      end
     end
 
     def resolve_dot
       dot = Ddig::Resolver::Dot.new(hostname: @hostname, server: @options[:nameserver], port: @options[:port]).lookup
 
-      dot.to_cli
+      if @options[:format] == 'json'
+        puts dot.to_json
+      else
+        dot.to_cli
+      end
     end
 
     def resolve_doh_h1
@@ -137,14 +145,22 @@ module Ddig
 
       doh = Ddig::Resolver::DohH1.new(hostname: @hostname, server: @options[:nameserver], dohpath: @options[:doh_path], port: @options[:port]).lookup
 
-      doh.to_cli
+      if @options[:format] == 'json'
+        puts dot.to_json
+      else
+        doh.to_cli
+      end
     end
 
     def resolve_ddr
       ip = Ddig::Ip.new(use_ipv4: @use_ipv4, use_ipv6: @use_ipv6)
       ddr = Ddig::Ddr.new(nameservers: @options[:nameserver], ip: ip.ip_type)
 
-      ddr.to_cli
+      if @options[:format] == 'json'
+        puts ddr.to_json
+      else
+        ddr.to_cli
+      end
     end
   end
 end

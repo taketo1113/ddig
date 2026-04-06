@@ -10,6 +10,7 @@ module Ddig
     class Dot
       attr_reader :hostname, :server, :server_name, :port
       attr_reader :a, :aaaa
+      attr_reader :a_response_time, :aaaa_response_time
 
       def initialize(hostname:, server:, server_name: nil, port: 853)
         @hostname = hostname
@@ -25,9 +26,13 @@ module Ddig
           return nil
         end
 
+        a_start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         @a = get_resources(@hostname, Resolv::DNS::Resource::IN::A).map { |resource| resource.address.to_s if resource.is_a?(Resolv::DNS::Resource::IN::A) }.compact
+        @a_response_time = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - a_start) * 1000).round
 
+        aaaa_start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         @aaaa = get_resources(@hostname, Resolv::DNS::Resource::IN::AAAA).map { |resource| resource.address.to_s if resource.is_a?(Resolv::DNS::Resource::IN::AAAA) }.compact
+        @aaaa_response_time = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - aaaa_start) * 1000).round
 
         self
       end
@@ -84,6 +89,8 @@ module Ddig
           server: @server,
           server_name: @server_name,
           port: @port,
+          a_response_time: @a_response_time,
+          aaaa_response_time: @aaaa_response_time,
         }
       end
 
@@ -102,6 +109,12 @@ module Ddig
         end
 
         puts
+        unless @a_response_time.nil?
+          puts "# Query time (A):    #{@a_response_time} msec"
+        end
+        unless @aaaa_response_time.nil?
+          puts "# Query time (AAAA): #{@aaaa_response_time} msec"
+        end
         puts "# SERVER(Address): #{@server}"
         #puts "# SERVER(Hostname): #{@server_name}"
         puts "# PORT: #{@port}"

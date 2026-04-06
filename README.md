@@ -34,9 +34,9 @@ If bundler is not being used to manage dependencies, install the gem by executin
 ddig = Ddig.lookup('dns.google', nameservers: ['8.8.8.8', '2001:4860:4860::8888'])
 
 ddig[:do53][:ipv4]
-=> #<Ddig::Resolver::Do53:0x00000001207aaeb0 @a=["8.8.4.4", "8.8.8.8"], @aaaa=["2001:4860:4860::8844", "2001:4860:4860::8888"], @hostname="dns.google", @ip=:ipv4, @nameservers=["8.8.8.8"]>
+=> #<Ddig::Resolver::Do53:0x00000001207aaeb0 @a=["8.8.4.4", "8.8.8.8"], @a_response_time=18, @aaaa=["2001:4860:4860::8844", "2001:4860:4860::8888"], @aaaa_response_time=16, @hostname="dns.google", @ip=:ipv4, @nameservers=["8.8.8.8"]>
 ddig[:do53][:ipv6]
-=> #<Ddig::Resolver::Do53:0x000000012073d2c0 @a=["8.8.4.4", "8.8.8.8"], @aaaa=["2001:4860:4860::8844", "2001:4860:4860::8888"], @hostname="dns.google", @ip=:ipv4, @nameservers=["2001:4860:4860::8888"]>
+=> #<Ddig::Resolver::Do53:0x000000012073d2c0 @a=["8.8.4.4", "8.8.8.8"], @a_response_time=18, @aaaa=["2001:4860:4860::8844", "2001:4860:4860::8888"], @aaaa_response_time=16, @hostname="dns.google", @ip=:ipv4, @nameservers=["2001:4860:4860::8888"]>
 
 ddig[:ddr]
 => [#<Ddig::Ddr::DesignatedResolver:0x0000000120735480
@@ -90,7 +90,7 @@ ddig[:ddr]
 - Do53
 ```ruby
 do53 = Ddig::Resolver::Do53.new(hostname: 'dns.google', nameservers: '8.8.8.8').lookup
-=> #<Ddig::Resolver::Do53:0x0000000121717b78 @a=["8.8.8.8", "8.8.4.4"], @aaaa=["2001:4860:4860::8844", "2001:4860:4860::8888"], @hostname="dns.google", @ip=nil, @nameserver=#<Ddig::Nameserver:0x00000001211fb108 @nameservers="8.8.8.8", @servers=["8.8.8.8"]>, @nameservers=["8.8.8.8"]>
+=> #<Ddig::Resolver::Do53:0x0000000121717b78 @a=["8.8.8.8", "8.8.4.4"], @a_response_time=18, @aaaa=["2001:4860:4860::8844", "2001:4860:4860::8888"], @aaaa_response_time=16, @hostname="dns.google", @ip=nil, @nameserver=#<Ddig::Nameserver:0x00000001211fb108 @nameservers="8.8.8.8", @servers=["8.8.8.8"]>, @nameservers=["8.8.8.8"]>
 
 do53.a
 => ["8.8.4.4", "8.8.8.8"]
@@ -101,7 +101,7 @@ do53.aaaa
 - DoT
 ```ruby
 dot = Ddig::Resolver::Dot.new(hostname: 'dns.google', server: '8.8.8.8').lookup
-=> #<Ddig::Resolver::Dot:0x000000012145da90 @a=["8.8.8.8", "8.8.4.4"], @aaaa=["2001:4860:4860::8844", "2001:4860:4860::8888"], @hostname="dns.google", @open_timeout=3, @port=853, @server="8.8.8.8", @server_name=nil>
+=> #<Ddig::Resolver::Dot:0x000000012145da90 @a=["8.8.8.8", "8.8.4.4"], @a_response_time=108, @aaaa=["2001:4860:4860::8844", "2001:4860:4860::8888"], @aaaa_response_time=122, @hostname="dns.google", @open_timeout=3, @port=853, @server="8.8.8.8", @server_name=nil>
 
 dot.a
 => ["8.8.4.4", "8.8.8.8"]
@@ -112,7 +112,7 @@ dot.aaaa
 - DoH (HTTP/1.1)
 ```ruby
 doh = Ddig::Resolver::DohH1.new(hostname: 'dns.google', server: 'dns.google', dohpath: '/dns-query{?dns}').lookup
-=> #<Ddig::Resolver::DohH1:0x00000001023ed020 @a=["8.8.4.4", "8.8.8.8"], @aaaa=["2001:4860:4860::8888", "2001:4860:4860::8844"], @address=nil, @dohpath="/dns-query{?dns}", @hostname="dns.google", @open_timeout=10, @port=443, @server="dns.google">
+=> #<Ddig::Resolver::DohH1:0x00000001023ed020 @a=["8.8.4.4", "8.8.8.8"], @a_response_time=62, @aaaa=["2001:4860:4860::8888", "2001:4860:4860::8844"], @aaaa_response_time=77, @address=nil, @dohpath="/dns-query{?dns}", @hostname="dns.google", @open_timeout=10, @port=443, @server="dns.google">
 
 doh.a
 => ["8.8.4.4", "8.8.8.8"]
@@ -151,6 +151,8 @@ dns.google	A	8.8.8.8
 dns.google	AAAA	2001:4860:4860::8844
 dns.google	AAAA	2001:4860:4860::8888
 
+# Query time (A):    15 msec
+# Query time (AAAA): 15 msec
 # SERVER: 8.8.8.8
 
 # DDR
@@ -160,6 +162,8 @@ dns.google	A	8.8.8.8
 dns.google	AAAA	2001:4860:4860::8844
 dns.google	AAAA	2001:4860:4860::8888
 
+# Query time (A):    114 msec
+# Query time (AAAA): 187 msec
 # SERVER(Address): 8.8.4.4
 # PORT: 853
 
@@ -174,6 +178,8 @@ dns.google	A	8.8.4.4
 dns.google	AAAA	2001:4860:4860::8844
 dns.google	AAAA	2001:4860:4860::8888
 
+# Query time (A):    89 msec
+# Query time (AAAA): 105 msec
 # SERVER(Hostname): 2001:4860:4860::8888
 # SERVER(Path): /dns-query{?dns}
 # PORT: 443
@@ -188,6 +194,8 @@ dns.google	A	8.8.4.4
 dns.google	AAAA	2001:4860:4860::8844
 dns.google	AAAA	2001:4860:4860::8888
 
+# Query time (A):    20 msec
+# Query time (AAAA): 16 msec
 # SERVER: 8.8.8.8
 ```
 
@@ -199,6 +207,8 @@ dns.google	A	8.8.4.4
 dns.google	AAAA	2001:4860:4860::8888
 dns.google	AAAA	2001:4860:4860::8844
 
+# Query time (A):    90 msec
+# Query time (AAAA): 167 msec
 # SERVER(Address): 8.8.8.8
 # PORT: 853
 ```
@@ -211,6 +221,8 @@ dns.google	A	8.8.4.4
 dns.google	AAAA	2001:4860:4860::8888
 dns.google	AAAA	2001:4860:4860::8844
 
+# Query time (A):    69 msec
+# Query time (AAAA): 70 msec
 # SERVER(Hostname): dns.google
 # SERVER(Path): /dns-query{?dns}
 # PORT: 443

@@ -16,6 +16,11 @@ RSpec.describe Ddig::Resolver::Dot do
       expect(@dot.aaaa).to include "2001:4860:4860::8844"
       expect(@dot.aaaa).to include "2001:4860:4860::8888"
     end
+
+    it "a_response_time / aaaa_response_time return value" do
+      expect(@dot.a_response_time).not_to be_nil
+      expect(@dot.aaaa_response_time).not_to be_nil
+    end
   end
 
   context "#lookup: with server (ipv4) / server_name" do
@@ -32,6 +37,11 @@ RSpec.describe Ddig::Resolver::Dot do
       # aaaa
       expect(@dot.aaaa).to include "2001:4860:4860::8844"
       expect(@dot.aaaa).to include "2001:4860:4860::8888"
+    end
+
+    it "a_response_time / aaaa_response_time return value" do
+      expect(@dot.a_response_time).not_to be_nil
+      expect(@dot.aaaa_response_time).not_to be_nil
     end
   end
 
@@ -51,6 +61,11 @@ RSpec.describe Ddig::Resolver::Dot do
       # aaaa
       expect(@dot.aaaa).to include "2001:4860:4860::8844"
       expect(@dot.aaaa).to include "2001:4860:4860::8888"
+    end
+
+    it "a_response_time / aaaa_response_time return value" do
+      expect(@dot.a_response_time).not_to be_nil
+      expect(@dot.aaaa_response_time).not_to be_nil
     end
   end
 
@@ -100,6 +115,11 @@ RSpec.describe Ddig::Resolver::Dot do
       # aaaa
       expect(@dot.as_json[:aaaa]).to include "2001:4860:4860::8844"
       expect(@dot.as_json[:aaaa]).to include "2001:4860:4860::8888"
+    end
+
+    it "a_response_time / aaaa_response_time return value" do
+      expect(@dot.as_json[:a_response_time]).not_to be_nil
+      expect(@dot.as_json[:aaaa_response_time]).not_to be_nil
     end
 
     it "hostname set value" do
@@ -158,6 +178,11 @@ RSpec.describe Ddig::Resolver::Dot do
       # aaaa
       expect { @dot.to_cli }.to output(/2001:4860:4860::8888/).to_stdout
       expect { @dot.to_cli }.to output(/2001:4860:4860::8844/).to_stdout
+    end
+
+    it "a_response_time / aaaa_response_time return value" do
+      expect { @dot.to_cli }.to output(/Query time \(A\)/).to_stdout
+      expect { @dot.to_cli }.to output(/Query time \(AAAA\)/).to_stdout
     end
 
     it "server return values" do

@@ -17,6 +17,11 @@ RSpec.describe Ddig::Resolver::Do53 do
       expect(@do53.aaaa).to include "2001:4860:4860::8888"
     end
 
+    it "a_response_time / aaaa_response_time return value" do
+      expect(@do53.a_response_time).not_to be_nil
+      expect(@do53.aaaa_response_time).not_to be_nil
+    end
+
     it "hostname set value" do
       expect(@do53.hostname).to eq 'dns.google'
     end
@@ -46,6 +51,11 @@ RSpec.describe Ddig::Resolver::Do53 do
       # aaaa
       expect(@do53.aaaa).to include "2001:4860:4860::8844"
       expect(@do53.aaaa).to include "2001:4860:4860::8888"
+    end
+
+    it "a_response_time / aaaa_response_time return value" do
+      expect(@do53.a_response_time).not_to be_nil
+      expect(@do53.aaaa_response_time).not_to be_nil
     end
 
     it "hostname set value" do
@@ -93,6 +103,11 @@ RSpec.describe Ddig::Resolver::Do53 do
       expect(@do53.aaaa).to include "2001:4860:4860::8888"
     end
 
+    it "a_response_time / aaaa_response_time return value" do
+      expect(@do53.a_response_time).not_to be_nil
+      expect(@do53.aaaa_response_time).not_to be_nil
+    end
+
     it "hostname set value" do
       expect(@do53.hostname).to eq 'dns.google'
     end
@@ -127,6 +142,11 @@ RSpec.describe Ddig::Resolver::Do53 do
       expect(@do53.aaaa).to include "2001:4860:4860::8888"
     end
 
+    it "a_response_time / aaaa_response_time return value" do
+      expect(@do53.a_response_time).not_to be_nil
+      expect(@do53.aaaa_response_time).not_to be_nil
+    end
+
     it "hostname set value" do
       expect(@do53.hostname).to eq 'dns.google'
     end
@@ -154,6 +174,11 @@ RSpec.describe Ddig::Resolver::Do53 do
       # aaaa
       expect(@do53.as_json[:aaaa]).to include "2001:4860:4860::8844"
       expect(@do53.as_json[:aaaa]).to include "2001:4860:4860::8888"
+    end
+
+    it "a_response_time / aaaa_response_time return value" do
+      expect(@do53.as_json[:a_response_time]).not_to be_nil
+      expect(@do53.as_json[:aaaa_response_time]).not_to be_nil
     end
 
     it "hostname set value" do
@@ -204,6 +229,11 @@ RSpec.describe Ddig::Resolver::Do53 do
       # aaaa
       expect { @do53.to_cli }.to output(/2001:4860:4860::8888/).to_stdout
       expect { @do53.to_cli }.to output(/2001:4860:4860::8844/).to_stdout
+    end
+
+    it "a_response_time / aaaa_response_time return value" do
+      expect { @do53.to_cli }.to output(/Query time \(A\)/).to_stdout
+      expect { @do53.to_cli }.to output(/Query time \(AAAA\)/).to_stdout
     end
   end
 end

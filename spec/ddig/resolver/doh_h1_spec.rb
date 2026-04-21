@@ -17,6 +17,14 @@ RSpec.describe Ddig::Resolver::DohH1 do
       expect(@doh.aaaa).to include "2001:4860:4860::8888"
     end
 
+    it "https return values" do
+      @doh = Ddig::Resolver::DohH1.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google', dohpath: '/dns-query{?dns}')
+      @doh.lookup
+
+      expect(@doh.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@doh.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+    end
+
     it "a_response_time / aaaa_response_time return value" do
       expect(@doh.a_response_time).not_to be_nil
       expect(@doh.aaaa_response_time).not_to be_nil
@@ -37,6 +45,14 @@ RSpec.describe Ddig::Resolver::DohH1 do
       # aaaa
       expect(@doh.aaaa).to include "2001:4860:4860::8844"
       expect(@doh.aaaa).to include "2001:4860:4860::8888"
+    end
+
+    it "https return values" do
+      @doh = Ddig::Resolver::DohH1.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google', dohpath: '/dns-query{?dns}')
+      @doh.lookup
+
+      expect(@doh.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@doh.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -61,6 +77,14 @@ RSpec.describe Ddig::Resolver::DohH1 do
       # aaaa
       expect(@doh.aaaa).to include "2001:4860:4860::8844"
       expect(@doh.aaaa).to include "2001:4860:4860::8888"
+    end
+
+    it "https return values" do
+      @doh = Ddig::Resolver::DohH1.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google', address: '2001:4860:4860::8888', dohpath: '/dns-query{?dns}')
+      @doh.lookup
+
+      expect(@doh.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@doh.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -117,6 +141,14 @@ RSpec.describe Ddig::Resolver::DohH1 do
       # aaaa
       expect(@doh.as_json[:aaaa]).to include "2001:4860:4860::8844"
       expect(@doh.as_json[:aaaa]).to include "2001:4860:4860::8888"
+    end
+
+    it "https return values" do
+      @doh = Ddig::Resolver::DohH1.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google', dohpath: '/dns-query{?dns}')
+      @doh.lookup
+
+      expect(@doh.as_json[:https]).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@doh.as_json[:https]).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
     end
 
     it "a_response_time / aaaa_response_time return value" do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Ddig
   module Ipv6Helper
     def enable_ipv4?

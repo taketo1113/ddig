@@ -21,8 +21,22 @@ RSpec.describe Ddig::Resolver::Do53 do
       @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org')
       @do53.lookup
 
-      expect(@do53.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
-      expect(@do53.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+      https_rr1 = @do53.https.first
+      https_rr2 = @do53.https.last
+
+      expect(https_rr1.priority).to eq 1
+      expect(https_rr1.target).to eq "."
+      expect(https_rr1.alpn).to eq ["h3", "h2"]
+      expect(https_rr1.port).to eq nil
+      expect(https_rr1.ipv4hint).to eq nil
+      expect(https_rr1.ipv6hint).to eq nil
+
+      expect(https_rr2.priority).to eq 2
+      expect(https_rr2.target).to eq "test.taketoketa.org"
+      expect(https_rr2.alpn).to eq ["h3", "h2"]
+      expect(https_rr2.port).to eq nil
+      expect(https_rr2.ipv4hint).to eq nil
+      expect(https_rr2.ipv6hint).to eq nil
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -65,8 +79,22 @@ RSpec.describe Ddig::Resolver::Do53 do
       @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org', nameservers: @nameservers)
       @do53.lookup
 
-      expect(@do53.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
-      expect(@do53.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+      https_rr1 = @do53.https.first
+      https_rr2 = @do53.https.last
+
+      expect(https_rr1.priority).to eq 1
+      expect(https_rr1.target).to eq "."
+      expect(https_rr1.alpn).to eq ["h3", "h2"]
+      expect(https_rr1.port).to eq nil
+      expect(https_rr1.ipv4hint).to eq nil
+      expect(https_rr1.ipv6hint).to eq nil
+
+      expect(https_rr2.priority).to eq 2
+      expect(https_rr2.target).to eq "test.taketoketa.org"
+      expect(https_rr2.alpn).to eq ["h3", "h2"]
+      expect(https_rr2.port).to eq nil
+      expect(https_rr2.ipv4hint).to eq nil
+      expect(https_rr2.ipv6hint).to eq nil
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -123,8 +151,22 @@ RSpec.describe Ddig::Resolver::Do53 do
       @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org', ip: @ip, nameservers: @nameservers)
       @do53.lookup
 
-      expect(@do53.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
-      expect(@do53.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+      https_rr1 = @do53.https.first
+      https_rr2 = @do53.https.last
+
+      expect(https_rr1.priority).to eq 1
+      expect(https_rr1.target).to eq "."
+      expect(https_rr1.alpn).to eq ["h3", "h2"]
+      expect(https_rr1.port).to eq nil
+      expect(https_rr1.ipv4hint).to eq nil
+      expect(https_rr1.ipv6hint).to eq nil
+
+      expect(https_rr2.priority).to eq 2
+      expect(https_rr2.target).to eq "test.taketoketa.org"
+      expect(https_rr2.alpn).to eq ["h3", "h2"]
+      expect(https_rr2.port).to eq nil
+      expect(https_rr2.ipv4hint).to eq nil
+      expect(https_rr2.ipv6hint).to eq nil
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -170,8 +212,22 @@ RSpec.describe Ddig::Resolver::Do53 do
       @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org', ip: @ip, nameservers: @nameservers)
       @do53.lookup
 
-      expect(@do53.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
-      expect(@do53.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+      https_rr1 = @do53.https.first
+      https_rr2 = @do53.https.last
+
+      expect(https_rr1.priority).to eq 1
+      expect(https_rr1.target).to eq "."
+      expect(https_rr1.alpn).to eq ["h3", "h2"]
+      expect(https_rr1.port).to eq nil
+      expect(https_rr1.ipv4hint).to eq nil
+      expect(https_rr1.ipv6hint).to eq nil
+
+      expect(https_rr2.priority).to eq 2
+      expect(https_rr2.target).to eq "test.taketoketa.org"
+      expect(https_rr2.alpn).to eq ["h3", "h2"]
+      expect(https_rr2.port).to eq nil
+      expect(https_rr2.ipv4hint).to eq nil
+      expect(https_rr2.ipv6hint).to eq nil
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -212,8 +268,8 @@ RSpec.describe Ddig::Resolver::Do53 do
       @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org')
       @do53.lookup
 
-      expect(@do53.as_json[:https]).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
-      expect(@do53.as_json[:https]).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+      expect(@do53.as_json[:https]).to include({ priority: 1, target: ".", alpn: ["h3", "h2"], port: nil, ipv4hint: nil, ipv6hint: nil })
+      expect(@do53.as_json[:https]).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"], port: nil, ipv4hint: nil, ipv6hint: nil })
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -254,8 +310,8 @@ RSpec.describe Ddig::Resolver::Do53 do
       @do53 = Ddig::Resolver::Do53.new(hostname: 'ddig-https.taketoketa.org')
       @do53.lookup
 
-      expect(@do53.to_json).to include "{\"priority\":2,\"target\":\"test.taketoketa.org\",\"alpn\":[\"h3\",\"h2\"]}"
-      expect(@do53.to_json).to include "{\"priority\":1,\"target\":\".\",\"alpn\":[\"h3\",\"h2\"]}"
+      expect(@do53.to_json).to include "{\"priority\":2,\"target\":\"test.taketoketa.org\",\"alpn\":[\"h3\",\"h2\"],\"port\":null,\"ipv4hint\":null,\"ipv6hint\":null}"
+      expect(@do53.to_json).to include "{\"priority\":1,\"target\":\".\",\"alpn\":[\"h3\",\"h2\"],\"port\":null,\"ipv4hint\":null,\"ipv6hint\":null}"
     end
 
     it "hostname set value" do

@@ -21,8 +21,22 @@ RSpec.describe Ddig::Resolver::Dot do
       @dot = Ddig::Resolver::Dot.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google')
       @dot.lookup
 
-      expect(@dot.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
-      expect(@dot.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+      https_rr1 = @dot.https.first
+      https_rr2 = @dot.https.last
+
+      expect(https_rr1.priority).to eq 1
+      expect(https_rr1.target).to eq "."
+      expect(https_rr1.alpn).to eq ["h3", "h2"]
+      expect(https_rr1.port).to eq nil
+      expect(https_rr1.ipv4hint).to eq nil
+      expect(https_rr1.ipv6hint).to eq nil
+
+      expect(https_rr2.priority).to eq 2
+      expect(https_rr2.target).to eq "test.taketoketa.org"
+      expect(https_rr2.alpn).to eq ["h3", "h2"]
+      expect(https_rr2.port).to eq nil
+      expect(https_rr2.ipv4hint).to eq nil
+      expect(https_rr2.ipv6hint).to eq nil
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -51,8 +65,22 @@ RSpec.describe Ddig::Resolver::Dot do
       @dot = Ddig::Resolver::Dot.new(hostname: 'ddig-https.taketoketa.org', server: '8.8.8.8', server_name: 'dns.google')
       @dot.lookup
 
-      expect(@dot.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
-      expect(@dot.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+      https_rr1 = @dot.https.first
+      https_rr2 = @dot.https.last
+
+      expect(https_rr1.priority).to eq 1
+      expect(https_rr1.target).to eq "."
+      expect(https_rr1.alpn).to eq ["h3", "h2"]
+      expect(https_rr1.port).to eq nil
+      expect(https_rr1.ipv4hint).to eq nil
+      expect(https_rr1.ipv6hint).to eq nil
+
+      expect(https_rr2.priority).to eq 2
+      expect(https_rr2.target).to eq "test.taketoketa.org"
+      expect(https_rr2.alpn).to eq ["h3", "h2"]
+      expect(https_rr2.port).to eq nil
+      expect(https_rr2.ipv4hint).to eq nil
+      expect(https_rr2.ipv6hint).to eq nil
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -83,8 +111,22 @@ RSpec.describe Ddig::Resolver::Dot do
       @dot = Ddig::Resolver::Dot.new(hostname: 'ddig-https.taketoketa.org', server: '2001:4860:4860::8888', server_name: 'dns.google')
       @dot.lookup
 
-      expect(@dot.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
-      expect(@dot.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+      https_rr1 = @dot.https.first
+      https_rr2 = @dot.https.last
+
+      expect(https_rr1.priority).to eq 1
+      expect(https_rr1.target).to eq "."
+      expect(https_rr1.alpn).to eq ["h3", "h2"]
+      expect(https_rr1.port).to eq nil
+      expect(https_rr1.ipv4hint).to eq nil
+      expect(https_rr1.ipv6hint).to eq nil
+
+      expect(https_rr2.priority).to eq 2
+      expect(https_rr2.target).to eq "test.taketoketa.org"
+      expect(https_rr2.alpn).to eq ["h3", "h2"]
+      expect(https_rr2.port).to eq nil
+      expect(https_rr2.ipv4hint).to eq nil
+      expect(https_rr2.ipv6hint).to eq nil
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -145,8 +187,8 @@ RSpec.describe Ddig::Resolver::Dot do
       @dot = Ddig::Resolver::Dot.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google')
       @dot.lookup
 
-      expect(@dot.as_json[:https]).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
-      expect(@dot.as_json[:https]).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+      expect(@dot.as_json[:https]).to include({ priority: 1, target: ".", alpn: ["h3", "h2"], port: nil, ipv4hint: nil, ipv6hint: nil })
+      expect(@dot.as_json[:https]).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"], port: nil, ipv4hint: nil, ipv6hint: nil })
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -191,8 +233,8 @@ RSpec.describe Ddig::Resolver::Dot do
       @dot = Ddig::Resolver::Dot.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google')
       @dot.lookup
 
-      expect(@dot.to_json).to include "{\"priority\":2,\"target\":\"test.taketoketa.org\",\"alpn\":[\"h3\",\"h2\"]}"
-      expect(@dot.to_json).to include "{\"priority\":1,\"target\":\".\",\"alpn\":[\"h3\",\"h2\"]}"
+      expect(@dot.to_json).to include "{\"priority\":2,\"target\":\"test.taketoketa.org\",\"alpn\":[\"h3\",\"h2\"],\"port\":null,\"ipv4hint\":null,\"ipv6hint\":null}"
+      expect(@dot.to_json).to include "{\"priority\":1,\"target\":\".\",\"alpn\":[\"h3\",\"h2\"],\"port\":null,\"ipv4hint\":null,\"ipv6hint\":null}"
     end
 
     it "hostname set value" do

@@ -1,6 +1,8 @@
 require 'resolv'
 require 'json'
 
+require_relative 'dns_resource_https'
+
 module Ddig
   module Resolver
     # DNS Resolver of UDP/53
@@ -38,7 +40,7 @@ module Ddig
 
         @https = Resolv::DNS.open(nameserver: @nameservers) do |dns|
           ress = dns.getresources(@hostname, Resolv::DNS::Resource::IN::HTTPS)
-          ress.map { |resource| { priority: resource.priority, target: resource.target != Resolv::DNS::Name.create(".") ? resource.target.to_s : '.' , alpn: resource.params[:alpn].protocol_ids } }
+          DnsResourceHttps.build(ress)
         end
 
         self
@@ -48,7 +50,7 @@ module Ddig
         {
           a: @a,
           aaaa: @aaaa,
-          https: @https,
+          https: @https.map { |dns_resource_https| dns_resource_https.as_json },
           hostname: @hostname,
           nameservers: @nameservers,
           ip: @ip,
@@ -72,7 +74,7 @@ module Ddig
         end
         @https.each do |record|
           rr_type = 'HTTPS'
-          puts "#{@hostname}\t#{rr_type}\tpriority: #{record[:priority]}\ttarget: #{record[:target]}\talpn: #{record[:alpn].join(', ')}"
+          puts "#{@hostname}\t#{rr_type}\tpriority: #{record.priority}\ttarget: #{record.target}\talpn: #{record.alpn.join(', ')}"
         end
 
         puts

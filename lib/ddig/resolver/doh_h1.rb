@@ -12,7 +12,7 @@ module Ddig
     # DNS over HTTPS (HTTP/1.1)
     class DohH1
       attr_reader :hostname, :server, :address, :dohpath, :port
-      attr_reader :a, :aaaa
+      attr_reader :a, :aaaa, :https
       attr_reader :a_response_time, :aaaa_response_time
 
       def initialize(hostname:, server:, address: nil, dohpath: '/dns-query{?dns}', port: 443)
@@ -37,6 +37,10 @@ module Ddig
         aaaa_start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         @aaaa = get_resources(@hostname, Resolv::DNS::Resource::IN::AAAA).map { |resource| resource.address.to_s if resource.is_a?(Resolv::DNS::Resource::IN::AAAA) }.compact
         @aaaa_response_time = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - aaaa_start) * 1000).round
+
+        @https = get_resources(@hostname, Resolv::DNS::Resource::IN::HTTPS).map do |resource|
+          { priority: resource.priority, target: resource.target != Resolv::DNS::Name.create(".") ? resource.target.to_s : '.' , alpn: resource.params[:alpn].protocol_ids } if resource.is_a?(Resolv::DNS::Resource::IN::HTTPS)
+        end.compact
 
         self
       end
@@ -69,6 +73,7 @@ module Ddig
         {
           a: @a,
           aaaa: @aaaa,
+          https: @https,
           hostname: @hostname,
           server: @server,
           address: @address,
@@ -91,6 +96,10 @@ module Ddig
         @aaaa.each do |address|
           rr_type = 'AAAA'
           puts "#{@hostname}\t#{rr_type}\t#{address}"
+        end
+        @https.each do |record|
+          rr_type = 'HTTPS'
+          puts "#{@hostname}\t#{rr_type}\tpriority: #{record[:priority]}\ttarget: #{record[:target]}\talpn: #{record[:alpn].join(', ')}"
         end
 
         puts

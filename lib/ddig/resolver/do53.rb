@@ -8,7 +8,7 @@ module Ddig
     # DNS Resolver of UDP/53
     class Do53
       attr_reader :hostname, :nameservers, :ip
-      attr_reader :a, :aaaa
+      attr_reader :a, :aaaa, :https
       attr_reader :a_response_time, :aaaa_response_time
 
       def initialize(hostname:, nameservers: nil, ip: nil)
@@ -38,6 +38,11 @@ module Ddig
         end
         @aaaa_response_time = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - aaaa_start) * 1000).round
 
+        @https = Resolv::DNS.open(nameserver: @nameservers) do |dns|
+          ress = dns.getresources(@hostname, Resolv::DNS::Resource::IN::HTTPS)
+          ress.map { |resource| { priority: resource.priority, target: resource.target != Resolv::DNS::Name.create(".") ? resource.target.to_s : '.' , alpn: resource.params[:alpn].protocol_ids } }
+        end
+
         self
       end
 
@@ -45,6 +50,7 @@ module Ddig
         {
           a: @a,
           aaaa: @aaaa,
+          https: @https,
           hostname: @hostname,
           nameservers: @nameservers,
           ip: @ip,
@@ -65,6 +71,10 @@ module Ddig
         @aaaa.each do |address|
           rr_type = 'AAAA'
           puts "#{@hostname}\t#{rr_type}\t#{address}"
+        end
+        @https.each do |record|
+          rr_type = 'HTTPS'
+          puts "#{@hostname}\t#{rr_type}\tpriority: #{record[:priority]}\ttarget: #{record[:target]}\talpn: #{record[:alpn].join(', ')}"
         end
 
         puts

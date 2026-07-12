@@ -17,6 +17,14 @@ RSpec.describe Ddig::Resolver::Dot do
       expect(@dot.aaaa).to include "2001:4860:4860::8888"
     end
 
+    it "https return values" do
+      @dot = Ddig::Resolver::Dot.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google')
+      @dot.lookup
+
+      expect(@dot.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@dot.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+    end
+
     it "a_response_time / aaaa_response_time return value" do
       expect(@dot.a_response_time).not_to be_nil
       expect(@dot.aaaa_response_time).not_to be_nil
@@ -37,6 +45,14 @@ RSpec.describe Ddig::Resolver::Dot do
       # aaaa
       expect(@dot.aaaa).to include "2001:4860:4860::8844"
       expect(@dot.aaaa).to include "2001:4860:4860::8888"
+    end
+
+    it "https return values" do
+      @dot = Ddig::Resolver::Dot.new(hostname: 'ddig-https.taketoketa.org', server: '8.8.8.8', server_name: 'dns.google')
+      @dot.lookup
+
+      expect(@dot.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@dot.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -61,6 +77,14 @@ RSpec.describe Ddig::Resolver::Dot do
       # aaaa
       expect(@dot.aaaa).to include "2001:4860:4860::8844"
       expect(@dot.aaaa).to include "2001:4860:4860::8888"
+    end
+
+    it "https return values" do
+      @dot = Ddig::Resolver::Dot.new(hostname: 'ddig-https.taketoketa.org', server: '2001:4860:4860::8888', server_name: 'dns.google')
+      @dot.lookup
+
+      expect(@dot.https).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@dot.https).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
     end
 
     it "a_response_time / aaaa_response_time return value" do
@@ -117,6 +141,14 @@ RSpec.describe Ddig::Resolver::Dot do
       expect(@dot.as_json[:aaaa]).to include "2001:4860:4860::8888"
     end
 
+    it "https return values" do
+      @dot = Ddig::Resolver::Dot.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google')
+      @dot.lookup
+
+      expect(@dot.as_json[:https]).to include({ priority: 1, target: ".", alpn: ["h3", "h2"] })
+      expect(@dot.as_json[:https]).to include({ priority: 2, target: "test.taketoketa.org", alpn: ["h3", "h2"] })
+    end
+
     it "a_response_time / aaaa_response_time return value" do
       expect(@dot.as_json[:a_response_time]).not_to be_nil
       expect(@dot.as_json[:aaaa_response_time]).not_to be_nil
@@ -155,6 +187,14 @@ RSpec.describe Ddig::Resolver::Dot do
       expect(@dot.to_json).to include "2001:4860:4860::8888"
     end
 
+    it "https return values" do
+      @dot = Ddig::Resolver::Dot.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google')
+      @dot.lookup
+
+      expect(@dot.to_json).to include "{\"priority\":2,\"target\":\"test.taketoketa.org\",\"alpn\":[\"h3\",\"h2\"]}"
+      expect(@dot.to_json).to include "{\"priority\":1,\"target\":\".\",\"alpn\":[\"h3\",\"h2\"]}"
+    end
+
     it "hostname set value" do
       expect(@dot.to_json).to include 'dns.google'
     end
@@ -178,6 +218,14 @@ RSpec.describe Ddig::Resolver::Dot do
       # aaaa
       expect { @dot.to_cli }.to output(/2001:4860:4860::8888/).to_stdout
       expect { @dot.to_cli }.to output(/2001:4860:4860::8844/).to_stdout
+    end
+
+    it "https return values" do
+      @dot = Ddig::Resolver::Dot.new(hostname: 'ddig-https.taketoketa.org', server: 'dns.google')
+      @dot.lookup
+
+      expect { @dot.to_cli }.to output(/HTTPS	priority: 2	target: test.taketoketa.org	alpn: h3, h2/).to_stdout
+      expect { @dot.to_cli }.to output(/HTTPS	priority: 1	target: .	alpn: h3, h2/).to_stdout
     end
 
     it "a_response_time / aaaa_response_time return value" do

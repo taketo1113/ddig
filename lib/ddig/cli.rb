@@ -58,6 +58,15 @@ module Ddig
         return false
       end
 
+      if @options[:nameserver].nil?
+        if @options[:dns_type] == "dot" || @options[:dns_type] == "doh_h1"
+          puts "Error: nameserver is required with dns_type: #{@options[:dns_type]}"
+          puts
+
+          return false
+        end
+      end
+
       return true
     end
 
@@ -118,11 +127,6 @@ module Ddig
       ip = Ddig::Ip.new(use_ipv4: @use_ipv4, use_ipv6: @use_ipv6)
       do53 = Ddig::Resolver::Do53.new(hostname: @hostname, nameservers: @options[:nameserver], ip: ip.ip_type).lookup
 
-      if do53.nil?
-        puts "Error: Could not lookup with nameserver: #{@options[:nameserver]}"
-        exit
-      end
-
       if @options[:format] == 'json'
         puts do53.to_json
       else
@@ -141,7 +145,8 @@ module Ddig
     end
 
     def resolve_doh_h1
-      if @options[:nameserver].nil? || @options[:doh_path].nil?
+      # set default doh_path
+      if @options[:doh_path].nil?
         @options[:doh_path] = '/dns-query{?dns}'
       end
 

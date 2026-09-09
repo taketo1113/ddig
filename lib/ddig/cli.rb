@@ -119,7 +119,7 @@ module Ddig
       do53 = Ddig::Resolver::Do53.new(hostname: @hostname, nameservers: @options[:nameserver], ip: ip.ip_type).lookup
 
       if do53.nil?
-        puts "Error: Could not lookup wit nameserver: #{@options[:nameserver]}"
+        puts "Error: Could not lookup with nameserver: #{@options[:nameserver]}"
         exit
       end
 

@@ -63,6 +63,11 @@ module Ddig
           end
 
         when 'http/1.1', 'h2', 'h3'
+          if @protocol == 'h2' || @protocol == 'h3'
+            @errors << "#{@protocol} is not supportted protocol"
+            return
+          end
+
           @resolver = Ddig::Resolver::DohH1.new(hostname: @hostname, server: @address, address: @address, dohpath: @dohpath, port: @port).lookup
 
           unless @resolver.nil?
